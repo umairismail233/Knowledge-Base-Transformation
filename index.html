@@ -1,3857 +1,7729 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Knowledge Base Transformation Case Study</title>
+
     <style>
+
         body {
+
             box-sizing: border-box;
+
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
             margin: 0;
+
             padding: 0;
+
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
             min-height: 100%;
+
         }
+
+
 
         html {
+
             height: 100%;
+
         }
+
+
 
         .container {
+
             max-width: 1200px;
+
             margin: 0 auto;
+
             padding: 20px;
+
         }
+
+
 
         .header {
+
             text-align: center;
+
             color: white;
+
             margin-bottom: 40px;
+
         }
+
+
 
         .header h1 {
+
             font-size: 2.5rem;
+
             margin-bottom: 10px;
+
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+
         }
+
+
 
         .header p {
+
             font-size: 1.2rem;
+
             opacity: 0.9;
+
         }
+
+
 
         .scenario-toggle {
+
             display: flex;
+
             justify-content: center;
+
             margin-bottom: 30px;
+
             gap: 10px;
+
         }
+
+
 
         .toggle-btn {
+
             padding: 12px 30px;
+
             border: none;
+
             border-radius: 25px;
+
             font-size: 1.1rem;
+
             font-weight: bold;
+
             cursor: pointer;
+
             transition: all 0.3s ease;
+
             background: rgba(255,255,255,0.2);
+
             color: white;
+
             border: 2px solid rgba(255,255,255,0.3);
+
         }
+
+
 
         .toggle-btn.active {
+
             background: white;
+
             color: #667eea;
+
             transform: translateY(-2px);
+
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+
         }
+
+
 
         .scenario-content {
+
             display: none;
+
             animation: fadeIn 0.5s ease-in;
+
         }
+
+
 
         .scenario-content.active {
+
             display: block;
+
         }
+
+
 
         @keyframes fadeIn {
+
             from { opacity: 0; transform: translateY(20px); }
+
             to { opacity: 1; transform: translateY(0); }
+
         }
+
+
 
         .simulation-area {
+
             background: white;
+
             border-radius: 15px;
+
             padding: 30px;
+
             margin-bottom: 30px;
+
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+
         }
+
+
 
         .workspace {
+
             display: grid;
+
             grid-template-columns: 1fr 1fr;
+
             gap: 30px;
+
             margin-bottom: 30px;
+
         }
+
+
 
         .agent-panel, .system-panel {
+
             background: #f8f9fa;
+
             border-radius: 10px;
+
             padding: 20px;
+
             border-left: 4px solid #dc3545;
+
         }
+
+
 
         .system-panel {
+
             border-left-color: #28a745;
+
         }
+
+
 
         .panel-title {
+
             font-weight: bold;
+
             margin-bottom: 15px;
+
             color: #333;
+
             display: flex;
+
             align-items: center;
+
             gap: 10px;
+
         }
+
+
 
         .status-indicator {
+
             width: 12px;
+
             height: 12px;
+
             border-radius: 50%;
+
             background: #dc3545;
+
         }
+
+
 
         .system-panel .status-indicator {
+
             background: #28a745;
+
         }
+
+
 
         .old-kb, .new-kb {
+
             background: #fff;
+
             border: 2px dashed #ddd;
+
             border-radius: 8px;
+
             padding: 15px;
+
             margin: 10px 0;
+
             min-height: 120px;
+
         }
+
+
 
         .new-kb {
+
             border-color: #28a745;
+
             background: #f8fff9;
+
         }
+
+
 
         .metrics-grid {
+
             display: grid;
+
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+
             gap: 20px;
+
             margin-top: 30px;
+
         }
+
+
 
         .metric-card {
+
             background: white;
+
             border-radius: 10px;
+
             padding: 20px;
+
             text-align: center;
+
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+
             transition: transform 0.3s ease;
+
         }
+
+
 
         .metric-card:hover {
+
             transform: translateY(-5px);
+
         }
+
+
 
         .metric-value {
+
             font-size: 2rem;
+
             font-weight: bold;
+
             margin-bottom: 5px;
+
         }
+
+
 
         .metric-value.negative {
+
             color: #dc3545;
+
         }
+
+
 
         .metric-value.positive {
+
             color: #28a745;
+
         }
+
+
 
         .metric-label {
+
             color: #666;
+
             font-size: 0.9rem;
+
         }
+
+
 
         .chatbot-demo {
+
             background: #e3f2fd;
+
             border-radius: 10px;
+
             padding: 20px;
+
             margin-top: 20px;
+
         }
+
+
 
         .chat-interface {
+
             background: white;
+
             border-radius: 8px;
+
             padding: 15px;
+
             max-width: 400px;
+
             margin: 0 auto;
+
         }
+
+
 
         .chat-input {
+
             width: 100%;
+
             padding: 10px;
+
             border: 1px solid #ddd;
+
             border-radius: 5px;
+
             margin-bottom: 10px;
+
         }
+
+
 
         .chat-response {
+
             background: #f0f0f0;
+
             padding: 10px;
+
             border-radius: 5px;
+
             margin-top: 10px;
+
             display: none;
+
         }
+
+
 
         /* Before Scenario Styles */
+
         .live-call-demo {
+
             background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+
             border-radius: 15px;
+
             padding: 25px;
+
             margin-bottom: 30px;
+
             color: white;
+
             box-shadow: 0 10px 30px rgba(255, 107, 107, 0.3);
+
         }
+
+
 
         .call-header {
+
             display: flex;
+
             justify-content: center;
+
             align-items: center;
+
             margin-bottom: 20px;
+
             background: rgba(255,255,255,0.1);
+
             padding: 15px;
+
             border-radius: 10px;
+
         }
+
+
 
         .call-status {
+
             display: flex;
+
             align-items: center;
+
             gap: 15px;
+
             font-weight: bold;
+
             font-size: 1.1rem;
+
         }
+
+
 
         .status-dot {
+
             width: 12px;
+
             height: 12px;
+
             border-radius: 50%;
+
             background: #dc3545;
+
         }
+
+
 
         .blinking-red {
+
             animation: blink 1s infinite;
+
         }
+
+
 
         @keyframes blink {
+
             0%, 50% { opacity: 1; }
+
             51%, 100% { opacity: 0.3; }
+
         }
+
+
 
         .call-timer {
+
             background: rgba(0,0,0,0.3);
+
             padding: 5px 15px;
+
             border-radius: 20px;
+
             font-family: 'Courier New', monospace;
+
         }
+
+
 
         .call-workspace {
+
             display: grid;
+
             grid-template-columns: 1fr 1fr;
+
             gap: 20px;
+
             margin-top: 20px;
+
         }
+
+
 
         .agent-screen, .customer-side {
+
             background: rgba(255,255,255,0.95);
+
             color: #333;
+
             border-radius: 10px;
+
             padding: 20px;
+
             min-height: 400px;
+
         }
+
+
 
         .screen-header, .customer-header {
+
             display: flex;
+
             justify-content: space-between;
+
             align-items: center;
+
             margin-bottom: 15px;
+
             padding-bottom: 10px;
+
             border-bottom: 2px solid #eee;
+
             font-weight: bold;
+
         }
+
+
 
         .stress-high, .patience-low {
+
             color: #dc3545;
+
             font-weight: bold;
+
             animation: pulse 2s infinite;
+
         }
+
+
 
         @keyframes pulse {
+
             0% { opacity: 1; }
+
             50% { opacity: 0.6; }
+
             100% { opacity: 1; }
+
         }
+
+
 
         .old-knowledge-base {
+
             background: #f8f9fa;
+
             border: 2px dashed #dc3545;
+
             border-radius: 8px;
+
             padding: 15px;
+
             margin-bottom: 15px;
+
         }
+
+
 
         .kb-header {
+
             font-weight: bold;
+
             color: #dc3545;
+
             margin-bottom: 10px;
+
         }
+
+
 
         .crossed-out {
+
             text-decoration: line-through;
+
             opacity: 0.6;
+
             color: #666;
+
         }
+
+
 
         .search-box input {
+
             width: 100%;
+
             padding: 8px;
+
             border: 1px solid #ddd;
+
             border-radius: 5px;
+
             margin-bottom: 10px;
+
         }
+
+
 
         .search-results {
+
             background: #fff5f5;
+
             padding: 10px;
+
             border-radius: 5px;
+
             border-left: 4px solid #dc3545;
+
         }
+
+
 
         .email-panic {
+
             background: #fff3cd;
+
             border-radius: 8px;
+
             padding: 15px;
+
             border-left: 4px solid #ffc107;
+
         }
+
+
 
         .email-header {
+
             font-weight: bold;
+
             color: #856404;
+
             margin-bottom: 10px;
+
         }
+
+
 
         .email-item {
+
             display: flex;
+
             justify-content: space-between;
+
             padding: 8px 0;
+
             border-bottom: 1px solid #f0f0f0;
+
         }
+
+
 
         .email-status {
+
             color: #dc3545;
+
             font-style: italic;
+
             animation: loading 1.5s infinite;
+
         }
+
+
 
         @keyframes loading {
+
             0%, 100% { opacity: 1; }
+
             50% { opacity: 0.5; }
+
         }
+
+
 
         .conversation-flow {
+
             margin-top: 20px;
+
         }
+
+
 
         .message {
+
             margin: 10px 0;
+
             padding: 12px;
+
             border-radius: 15px;
+
             max-width: 80%;
+
         }
+
+
 
         .customer-msg {
+
             background: #e3f2fd;
+
             margin-left: auto;
+
             text-align: right;
+
         }
+
+
 
         .agent-msg {
+
             background: #f5f5f5;
+
             border-left: 4px solid #ffc107;
+
         }
+
+
 
         .typing::after {
+
             content: '...';
+
             animation: typing 1.5s infinite;
+
         }
+
+
 
         @keyframes typing {
+
             0%, 33% { content: '.'; }
+
             34%, 66% { content: '..'; }
+
             67%, 100% { content: '...'; }
+
         }
+
+
 
         .hold-indicator {
+
             background: #ffebee;
+
             border: 2px solid #f44336;
+
             border-radius: 10px;
+
             padding: 15px;
+
             margin: 15px 0;
+
             text-align: center;
+
         }
+
+
 
         .hold-timer {
+
             font-weight: bold;
+
             color: #d32f2f;
+
             font-size: 1.1rem;
+
         }
+
+
 
         .hold-music {
+
             margin-top: 5px;
+
             color: #666;
+
             animation: musicNote 2s infinite;
+
         }
+
+
 
         @keyframes musicNote {
+
             0%, 100% { transform: scale(1); }
+
             50% { transform: scale(1.1); }
+
         }
+
+
 
         .customer-thoughts {
+
             margin-top: 20px;
+
         }
+
+
 
         .thought-bubble {
+
             background: #ffcdd2;
+
             border-radius: 15px;
+
             padding: 15px;
+
             position: relative;
+
             border: 2px solid #f44336;
+
         }
+
+
 
         .thought-bubble::before {
+
             content: '💭';
+
             position: absolute;
+
             top: -10px;
+
             left: 20px;
+
             font-size: 1.5rem;
+
         }
+
+
 
         .thought-bubble p {
+
             margin: 5px 0;
+
             font-style: italic;
+
             color: #c62828;
+
         }
+
+
 
         .developer-dependency {
+
             background: linear-gradient(135deg, #ff9800, #f57c00);
+
             border-radius: 15px;
+
             padding: 30px;
+
             margin: 30px 0;
+
             color: white;
+
             box-shadow: 0 10px 30px rgba(255, 152, 0, 0.3);
+
         }
+
+
 
         .dependency-timeline {
+
             position: relative;
+
             max-width: 800px;
+
             margin: 0 auto;
+
         }
+
+
 
         .dependency-timeline::before {
+
             content: '';
+
             position: absolute;
+
             left: 20px;
+
             top: 0;
+
             bottom: 0;
+
             width: 4px;
+
             background: rgba(255,255,255,0.3);
+
         }
+
+
 
         .timeline-item {
+
             position: relative;
+
             margin: 30px 0;
+
             padding-left: 60px;
+
         }
+
+
 
         .timeline-dot {
+
             position: absolute;
+
             left: 8px;
+
             top: 0;
+
             width: 24px;
+
             height: 24px;
+
             border-radius: 50%;
+
             background: #f44336;
+
             border: 4px solid white;
+
             animation: timelinePulse 2s infinite;
+
         }
+
+
 
         @keyframes timelinePulse {
+
             0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.7); }
+
             50% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(244, 67, 54, 0); }
+
         }
+
+
 
         .timeline-content {
+
             background: rgba(255,255,255,0.1);
+
             padding: 20px;
+
             border-radius: 10px;
+
             backdrop-filter: blur(10px);
+
         }
+
+
 
         .timeline-content h4 {
+
             margin: 0 0 10px 0;
+
             color: #fff;
+
         }
+
+
 
         .timeline-content p {
+
             margin: 0;
+
             opacity: 0.9;
+
         }
+
+
 
         .pain-metrics {
+
             background: linear-gradient(135deg, #6a1b9a, #8e24aa);
+
             border-radius: 15px;
+
             padding: 30px;
+
             color: white;
+
             box-shadow: 0 10px 30px rgba(106, 27, 154, 0.3);
+
         }
+
+
 
         .pain-card {
+
             background: rgba(255,255,255,0.95) !important;
+
             color: #333 !important;
+
             border: 2px solid rgba(255,255,255,0.3);
+
             backdrop-filter: blur(10px);
+
         }
+
+
 
         .pain-card .metric-value {
+
             color: #dc3545 !important;
+
             text-shadow: none;
+
         }
+
+
 
         .pain-card .metric-label {
+
             color: #555 !important;
+
             font-weight: 600;
+
         }
+
+
 
         .pain-card .metric-trend {
+
             color: #666 !important;
+
         }
+
+
 
         .metric-trend {
+
             font-size: 0.8rem;
+
             margin-top: 5px;
+
             opacity: 0.8;
+
         }
+
+
 
         /* After Scenario Styles */
+
         .success-call-demo {
+
             background: linear-gradient(135deg, #28a745, #20c997);
+
             border-radius: 15px;
+
             padding: 25px;
+
             margin-bottom: 30px;
+
             color: white;
+
             box-shadow: 0 10px 30px rgba(40, 167, 69, 0.3);
+
         }
+
+
 
         .call-header.success {
+
             background: rgba(255,255,255,0.15);
+
         }
+
+
 
         .blinking-green {
+
             background: #28a745;
+
             animation: blinkGreen 1s infinite;
+
         }
+
+
 
         @keyframes blinkGreen {
+
             0%, 50% { opacity: 1; }
+
             51%, 100% { opacity: 0.3; }
+
         }
+
+
 
         .success-timer {
+
             background: rgba(40, 167, 69, 0.8);
+
         }
+
+
 
         .agent-screen.success, .customer-side.success {
+
             border: 2px solid #28a745;
+
             box-shadow: 0 5px 15px rgba(40, 167, 69, 0.2);
+
         }
+
+
 
         .confidence-high, .satisfaction-high {
+
             color: #28a745;
+
             font-weight: bold;
+
             animation: glow 2s infinite;
+
         }
+
+
 
         @keyframes glow {
+
             0%, 100% { text-shadow: 0 0 5px rgba(40, 167, 69, 0.5); }
+
             50% { text-shadow: 0 0 20px rgba(40, 167, 69, 0.8); }
+
         }
+
+
 
         .new-knowledge-base {
+
             background: #f8fff9;
+
             border: 2px solid #28a745;
+
             border-radius: 8px;
+
             padding: 15px;
+
             margin-bottom: 15px;
+
         }
+
+
 
         .kb-header.success {
+
             color: #28a745;
+
             font-weight: bold;
+
             margin-bottom: 10px;
+
         }
+
+
 
         .package-item {
+
             display: flex;
+
             justify-content: space-between;
+
             align-items: center;
+
             padding: 8px 12px;
+
             margin: 5px 0;
+
             background: white;
+
             border-radius: 5px;
+
             border-left: 4px solid #28a745;
+
         }
+
+
 
         .package-item.featured {
+
             background: linear-gradient(135deg, #fff3e0, #ffecb3);
+
             border-left-color: #ff9800;
+
             animation: highlight 3s infinite;
+
         }
+
+
 
         @keyframes highlight {
+
             0%, 100% { transform: scale(1); }
+
             50% { transform: scale(1.02); }
+
         }
+
+
 
         .package-name {
+
             font-weight: bold;
+
             color: #333;
+
         }
 
+
+
         .package-price {
+
             color: #28a745;
+
             font-weight: bold;
+
         }
+
+
 
         .package-status {
+
             font-size: 0.8rem;
+
             padding: 2px 8px;
+
             border-radius: 10px;
+
             background: #e8f5e8;
+
             color: #28a745;
+
         }
+
+
 
         .search-box.success input {
+
             border-color: #28a745;
+
         }
+
+
 
         .search-results.success {
+
             background: #e8f5e8;
+
             border-left-color: #28a745;
+
         }
+
+
 
         .chatbot-assist {
+
             background: #e3f2fd;
+
             border-radius: 8px;
+
             padding: 15px;
+
             border-left: 4px solid #2196f3;
+
         }
 
+
+
         .chatbot-header {
+
             font-weight: bold;
+
             color: #1976d2;
+
             margin-bottom: 10px;
+
         }
+
+
 
         .chatbot-suggestions {
+
             display: flex;
+
             gap: 8px;
+
             flex-wrap: wrap;
+
         }
+
+
 
         .suggestion-chip {
+
             background: #2196f3;
+
             color: white;
+
             padding: 4px 12px;
+
             border-radius: 15px;
+
             font-size: 0.8rem;
+
             cursor: pointer;
+
             transition: all 0.3s ease;
+
         }
+
+
 
         .suggestion-chip:hover {
+
             background: #1976d2;
+
             transform: translateY(-2px);
+
         }
+
+
 
         .agent-msg.success {
+
             background: #e8f5e8;
+
             border-left-color: #28a745;
+
             color: #2e7d32;
+
         }
+
+
 
         .quick-response {
+
             background: #f3e5f5;
+
             border-radius: 10px;
+
             padding: 10px;
+
             margin: 10px 0;
+
             display: flex;
+
             justify-content: space-between;
+
             align-items: center;
+
         }
+
+
 
         .response-time {
+
             color: #4caf50;
+
             font-weight: bold;
+
         }
+
+
 
         .accuracy-badge {
+
             background: #4caf50;
+
             color: white;
+
             padding: 4px 12px;
+
             border-radius: 15px;
+
             font-size: 0.8rem;
+
         }
+
+
 
         .customer-reaction {
+
             margin-top: 15px;
+
         }
+
+
 
         .reaction-bubble.positive {
+
             background: #e8f5e8;
+
             border: 2px solid #4caf50;
+
             border-radius: 15px;
+
             padding: 15px;
+
             position: relative;
+
         }
+
+
 
         .reaction-bubble.positive::before {
+
             content: '😊';
+
             position: absolute;
+
             top: -10px;
+
             left: 20px;
+
             font-size: 1.5rem;
+
         }
+
+
 
         .reaction-bubble.positive p {
+
             margin: 5px 0;
+
             color: #2e7d32;
+
             font-weight: 500;
+
         }
+
+
 
         .wordpress-demo {
+
             background: linear-gradient(135deg, #673ab7, #9c27b0);
+
             border-radius: 15px;
+
             padding: 30px;
+
             margin: 30px 0;
+
             color: white;
+
             box-shadow: 0 10px 30px rgba(103, 58, 183, 0.3);
+
         }
+
+
 
         .wordpress-interface {
+
             background: rgba(255,255,255,0.1);
+
             border-radius: 10px;
+
             padding: 20px;
+
             backdrop-filter: blur(10px);
+
         }
+
+
 
         .wp-header {
+
             display: flex;
+
             justify-content: space-between;
+
             align-items: center;
+
             margin-bottom: 20px;
+
             padding-bottom: 10px;
+
             border-bottom: 2px solid rgba(255,255,255,0.2);
+
         }
+
+
 
         .user-badge {
+
             background: rgba(255,255,255,0.2);
+
             padding: 5px 15px;
+
             border-radius: 20px;
+
             font-size: 0.9rem;
+
         }
+
+
 
         .update-scenario {
+
             display: flex;
+
             flex-direction: column;
+
             gap: 20px;
+
         }
+
+
 
         .scenario-step {
+
             display: flex;
+
             align-items: flex-start;
+
             gap: 20px;
+
         }
+
+
 
         .step-number {
+
             background: #4caf50;
+
             color: white;
+
             width: 40px;
+
             height: 40px;
+
             border-radius: 50%;
+
             display: flex;
+
             align-items: center;
+
             justify-content: center;
+
             font-weight: bold;
+
             font-size: 1.2rem;
+
             flex-shrink: 0;
+
         }
+
+
 
         .step-content {
+
             flex: 1;
+
             background: rgba(255,255,255,0.1);
+
             padding: 20px;
+
             border-radius: 10px;
+
         }
+
+
 
         .step-content h4 {
+
             margin: 0 0 10px 0;
+
             color: #fff;
+
         }
+
+
 
         .wp-editor {
+
             background: white;
+
             color: #333;
+
             border-radius: 8px;
+
             margin-top: 15px;
+
             overflow: hidden;
+
         }
+
+
 
         .editor-toolbar {
+
             background: #f5f5f5;
+
             padding: 10px;
+
             border-bottom: 1px solid #ddd;
+
             display: flex;
+
             gap: 10px;
+
         }
+
+
 
         .wp-btn {
+
             padding: 5px 15px;
+
             border: 1px solid #ddd;
+
             background: white;
+
             border-radius: 4px;
+
             cursor: pointer;
+
             transition: all 0.3s ease;
+
         }
+
+
 
         .wp-btn.active {
+
             background: #0073aa;
+
             color: white;
+
             border-color: #0073aa;
+
         }
+
+
 
         .editor-content {
+
             padding: 15px;
+
             min-height: 80px;
+
         }
+
+
 
         .publish-success {
+
             display: flex;
+
             align-items: center;
+
             gap: 10px;
+
             background: rgba(76, 175, 80, 0.2);
+
             padding: 15px;
+
             border-radius: 8px;
+
             border-left: 4px solid #4caf50;
+
         }
+
+
 
         .success-icon {
+
             font-size: 1.5rem;
+
         }
+
+
 
         .time-stamp {
+
             color: #4caf50;
+
             font-weight: bold;
+
             margin-left: auto;
+
         }
+
+
 
         .enhanced-chatbot-demo {
+
             background: linear-gradient(135deg, #2196f3, #21cbf3);
+
             border-radius: 15px;
+
             padding: 30px;
+
             margin: 30px 0;
+
             color: white;
+
             box-shadow: 0 10px 30px rgba(33, 150, 243, 0.3);
+
         }
+
+
 
         .chatbot-interface {
+
             background: rgba(255,255,255,0.1);
+
             border-radius: 10px;
+
             padding: 20px;
+
             backdrop-filter: blur(10px);
+
         }
+
+
 
         .chatbot-header {
+
             display: flex;
+
             justify-content: space-between;
+
             align-items: center;
+
             margin-bottom: 20px;
+
             padding-bottom: 10px;
+
             border-bottom: 2px solid rgba(255,255,255,0.2);
+
         }
+
+
 
         .online-status {
+
             background: rgba(76, 175, 80, 0.8);
+
             padding: 5px 15px;
+
             border-radius: 20px;
+
             font-size: 0.9rem;
+
         }
+
+
 
         .enhanced-chat-response {
+
             background: rgba(255,255,255,0.95);
+
             color: #333;
+
             border-radius: 10px;
+
             padding: 20px;
+
             margin-top: 15px;
+
             display: none;
+
         }
+
+
 
         .bot-message {
+
             display: flex;
+
             gap: 15px;
+
             align-items: flex-start;
+
         }
+
+
 
         .bot-avatar {
+
             background: #2196f3;
+
             color: white;
+
             width: 40px;
+
             height: 40px;
+
             border-radius: 50%;
+
             display: flex;
+
             align-items: center;
+
             justify-content: center;
+
             font-size: 1.2rem;
+
             flex-shrink: 0;
+
         }
+
+
 
         .bot-content {
+
             flex: 1;
+
         }
+
+
 
         .package-grid {
+
             display: grid;
+
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+
             gap: 15px;
+
             margin: 15px 0;
+
         }
+
+
 
         .package-card {
+
             background: #f8f9fa;
+
             border: 2px solid #e9ecef;
+
             border-radius: 8px;
+
             padding: 15px;
+
             text-align: center;
+
             transition: all 0.3s ease;
+
         }
+
+
 
         .package-card:hover {
+
             transform: translateY(-3px);
+
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+
         }
+
+
 
         .package-card.featured {
+
             border-color: #ff9800;
+
             background: linear-gradient(135deg, #fff3e0, #ffecb3);
+
         }
+
+
 
         .package-card h5 {
+
             margin: 0 0 10px 0;
+
             color: #333;
+
         }
+
+
 
         .package-card p {
+
             margin: 0 0 15px 0;
+
             color: #666;
+
         }
+
+
 
         .select-btn {
+
             background: #28a745;
+
             color: white;
+
             border: none;
+
             padding: 8px 20px;
+
             border-radius: 20px;
+
             cursor: pointer;
+
             transition: all 0.3s ease;
+
         }
+
+
 
         .select-btn:hover {
+
             background: #218838;
+
             transform: translateY(-2px);
+
         }
+
+
 
         .success-metrics {
+
             background: linear-gradient(135deg, #4caf50, #8bc34a);
+
             border-radius: 15px;
+
             padding: 30px;
+
             color: white;
+
             box-shadow: 0 10px 30px rgba(76, 175, 80, 0.3);
+
         }
+
+
 
         .success-card {
+
             background: rgba(255,255,255,0.95) !important;
+
             color: #333 !important;
+
             border: 2px solid rgba(255,255,255,0.4);
+
             backdrop-filter: blur(10px);
+
         }
+
+
 
         .success-card .metric-value {
+
             color: #28a745 !important;
+
             text-shadow: none;
+
         }
+
+
 
         .success-card .metric-label {
+
             color: #555 !important;
+
             font-weight: 600;
+
         }
+
+
 
         .success-card .metric-improvement {
+
             color: #666 !important;
+
         }
+
+
 
         .metric-improvement {
+
             font-size: 0.8rem;
+
             margin-top: 5px;
+
             opacity: 0.9;
+
             color: #a5d6a7;
+
         }
+
+
 
         .impact-section {
+
             background: linear-gradient(135deg, #28a745, #20c997);
+
             color: white;
+
             border-radius: 15px;
+
             padding: 30px;
+
             text-align: center;
+
         }
+
+
 
         .savings-highlight {
+
             font-size: 3rem;
+
             font-weight: bold;
+
             margin: 20px 0;
+
             text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+
         }
+
+
 
         /* Bot Toggle Button Styles */
+
         .bot-toggle {
+
             position: fixed;
+
             bottom: 20px;
+
             right: 20px;
+
             width: 60px;
+
             height: 60px;
+
             background: linear-gradient(135deg, #2196f3, #21cbf3);
+
             border-radius: 50%;
+
             display: flex;
+
             align-items: center;
+
             justify-content: center;
+
             cursor: pointer;
+
             box-shadow: 0 5px 20px rgba(33, 150, 243, 0.4);
+
             z-index: 999;
+
             transition: all 0.3s ease;
+
             animation: botPulse 3s infinite;
+
         }
+
+
 
         .bot-toggle:hover {
+
             transform: scale(1.1);
+
             box-shadow: 0 8px 25px rgba(33, 150, 243, 0.6);
+
         }
+
+
 
         .bot-toggle {
+
             display: none;
+
         }
+
+
 
         @keyframes botPulse {
+
             0%, 100% { 
+
                 box-shadow: 0 5px 20px rgba(33, 150, 243, 0.4);
+
             }
+
             50% { 
+
                 box-shadow: 0 5px 20px rgba(33, 150, 243, 0.8), 0 0 0 10px rgba(33, 150, 243, 0.1);
+
             }
+
         }
+
+
 
         .bot-icon {
+
             font-size: 1.8rem;
+
             animation: botBounce 2s infinite;
+
         }
+
+
 
         @keyframes botBounce {
+
             0%, 100% { transform: translateY(0); }
+
             50% { transform: translateY(-3px); }
+
         }
+
+
 
         .bot-tooltip {
+
             position: absolute;
+
             bottom: 70px;
+
             right: 0;
+
             background: white;
+
             padding: 12px 16px;
+
             border-radius: 10px;
+
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+
             white-space: nowrap;
+
             opacity: 0;
+
             transform: translateY(10px);
+
             animation: tooltipShow 0.5s ease-out 2s forwards, tooltipFloat 2s ease-in-out 2.5s infinite;
+
             border: 2px solid #2196f3;
+
         }
+
+
 
         @keyframes tooltipShow {
+
             to {
+
                 opacity: 1;
+
                 transform: translateY(0);
+
             }
+
         }
+
+
 
         @keyframes tooltipFloat {
+
             0%, 100% { transform: translateY(0); }
+
             50% { transform: translateY(-5px); }
+
         }
+
+
 
         .tooltip-text {
+
             color: #333;
+
             font-weight: 500;
+
             font-size: 0.9rem;
+
         }
+
+
 
         .tooltip-arrow {
+
             position: absolute;
+
             top: 100%;
+
             right: 20px;
+
             width: 0;
+
             height: 0;
+
             border-left: 8px solid transparent;
+
             border-right: 8px solid transparent;
+
             border-top: 8px solid #2196f3;
+
         }
+
+
 
         .tooltip-arrow::before {
+
             content: '';
+
             position: absolute;
+
             top: -10px;
+
             right: -6px;
+
             width: 0;
+
             height: 0;
+
             border-left: 6px solid transparent;
+
             border-right: 6px solid transparent;
+
             border-top: 6px solid white;
+
         }
+
+
 
         /* Floating Chatbot Styles */
+
         .floating-chatbot {
+
             position: fixed;
+
             bottom: 20px;
+
             right: 20px;
+
             width: 350px;
+
             height: 500px;
+
             background: white;
+
             border-radius: 15px;
+
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+
             z-index: 1000;
+
             display: none;
+
             flex-direction: column;
+
             overflow: hidden;
+
             border: 2px solid #2196f3;
+
         }
+
+
 
         .floating-chatbot.active {
+
             display: flex;
+
             animation: slideInUp 0.5s ease-out;
+
         }
+
+
 
         @keyframes slideInUp {
+
             from {
+
                 transform: translateY(100%);
+
                 opacity: 0;
+
             }
+
             to {
+
                 transform: translateY(0);
+
                 opacity: 1;
+
             }
+
         }
+
+
 
         .chatbot-floating-header {
+
             background: linear-gradient(135deg, #2196f3, #21cbf3);
+
             color: white;
+
             padding: 15px;
+
             display: flex;
+
             justify-content: space-between;
+
             align-items: center;
+
         }
+
+
 
         .chatbot-title {
+
             font-weight: bold;
+
             display: flex;
+
             align-items: center;
+
             gap: 8px;
+
         }
+
+
 
         .chatbot-close {
+
             background: none;
+
             border: none;
+
             color: white;
+
             font-size: 1.5rem;
+
             cursor: pointer;
+
             padding: 0;
+
             width: 30px;
+
             height: 30px;
+
             border-radius: 50%;
+
             display: flex;
+
             align-items: center;
+
             justify-content: center;
+
             transition: background 0.3s ease;
+
         }
+
+
 
         .chatbot-close:hover {
+
             background: rgba(255,255,255,0.2);
+
         }
+
+
 
         .chatbot-body {
+
             flex: 1;
+
             display: flex;
+
             flex-direction: column;
+
             overflow: hidden;
+
         }
+
+
 
         .chatbot-messages {
+
             flex: 1;
+
             padding: 15px;
+
             overflow-y: auto;
+
             background: #f8f9fa;
+
         }
+
+
 
         .chatbot-input-area {
+
             padding: 15px;
+
             border-top: 1px solid #eee;
+
             background: white;
+
         }
+
+
 
         .chatbot-search-input {
+
             width: 100%;
+
             padding: 12px;
+
             border: 2px solid #e9ecef;
+
             border-radius: 25px;
+
             outline: none;
+
             font-size: 14px;
+
             transition: border-color 0.3s ease;
+
         }
+
+
 
         .chatbot-search-input:focus {
+
             border-color: #2196f3;
+
         }
+
+
 
         .chat-message {
+
             margin-bottom: 15px;
+
             animation: fadeInMessage 0.3s ease-in;
+
         }
+
+
 
         @keyframes fadeInMessage {
+
             from { opacity: 0; transform: translateY(10px); }
+
             to { opacity: 1; transform: translateY(0); }
+
         }
+
+
 
         .bot-msg {
+
             background: white;
+
             padding: 12px 15px;
+
             border-radius: 15px 15px 15px 5px;
+
             border-left: 4px solid #2196f3;
+
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+
         }
+
+
 
         .user-msg {
+
             background: #2196f3;
+
             color: white;
+
             padding: 12px 15px;
+
             border-radius: 15px 15px 5px 15px;
+
             margin-left: 50px;
+
             text-align: right;
+
         }
+
+
 
         .package-result {
+
             background: #f8f9fa;
+
             border: 2px solid #e9ecef;
+
             border-radius: 10px;
+
             padding: 15px;
+
             margin: 10px 0;
+
             transition: all 0.3s ease;
+
         }
+
+
 
         .package-result:hover {
+
             border-color: #2196f3;
+
             transform: translateY(-2px);
+
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+
         }
+
+
 
         .package-result.featured {
+
             border-color: #ff9800;
+
             background: linear-gradient(135deg, #fff3e0, #ffecb3);
+
         }
+
+
 
         .package-result.new {
+
             border-color: #4caf50;
+
             background: linear-gradient(135deg, #e8f5e8, #c8e6c9);
+
         }
+
+
 
         .package-header {
+
             display: flex;
+
             justify-content: space-between;
+
             align-items: center;
+
             margin-bottom: 8px;
+
         }
+
+
 
         .package-name {
+
             font-weight: bold;
+
             color: #333;
+
         }
+
+
 
         .package-badge {
+
             padding: 4px 8px;
+
             border-radius: 12px;
+
             font-size: 0.7rem;
+
             font-weight: bold;
+
         }
+
+
 
         .badge-new {
+
             background: #4caf50;
+
             color: white;
+
         }
+
+
 
         .badge-popular {
+
             background: #ff9800;
+
             color: white;
+
         }
+
+
 
         .badge-basic {
+
             background: #6c757d;
+
             color: white;
+
         }
+
+
 
         .package-details {
+
             color: #666;
+
             font-size: 0.9rem;
+
             margin-bottom: 8px;
+
         }
+
+
 
         .package-price {
+
             font-weight: bold;
+
             color: #2196f3;
+
             font-size: 1.1rem;
+
         }
+
+
 
         .article-result {
+
             background: white;
+
             border-left: 4px solid #28a745;
+
             padding: 12px;
+
             margin: 8px 0;
+
             border-radius: 5px;
+
             cursor: pointer;
+
             transition: all 0.3s ease;
+
             overflow: hidden;
+
         }
+
+
 
         .article-result:hover {
+
             background: #f8fff9;
+
             transform: translateX(5px);
+
         }
+
+
 
         .article-result.expanded {
+
             background: #f0f8ff;
+
             border-left-color: #2196f3;
+
             border-radius: 10px;
+
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+
             transform: translateX(0);
+
         }
+
+
 
         .article-header {
+
             display: flex;
+
             justify-content: space-between;
+
             align-items: flex-start;
+
             margin-bottom: 5px;
+
         }
+
+
 
         .article-title {
+
             font-weight: bold;
+
             color: #333;
+
             flex: 1;
+
         }
+
+
 
         .article-expand-icon {
+
             color: #666;
+
             font-size: 1.2rem;
+
             margin-left: 10px;
+
             transition: transform 0.3s ease;
+
         }
+
+
 
         .article-result.expanded .article-expand-icon {
+
             transform: rotate(180deg);
+
         }
+
+
 
         .article-snippet {
+
             color: #666;
+
             font-size: 0.85rem;
+
             line-height: 1.4;
+
         }
+
+
 
         .article-full-content {
+
             display: none;
+
             margin-top: 15px;
+
             padding-top: 15px;
+
             border-top: 2px solid #e9ecef;
+
             animation: expandContent 0.3s ease-out;
+
         }
+
+
 
         .article-result.expanded .article-full-content {
+
             display: block;
+
         }
+
+
 
         @keyframes expandContent {
+
             from {
+
                 opacity: 0;
+
                 transform: translateY(-10px);
+
             }
+
             to {
+
                 opacity: 1;
+
                 transform: translateY(0);
+
             }
+
         }
+
+
 
         .article-meta {
+
             display: flex;
+
             justify-content: space-between;
+
             align-items: center;
+
             margin-bottom: 15px;
+
             font-size: 0.8rem;
+
             color: #666;
+
         }
+
+
 
         .last-updated {
+
             background: #e8f5e8;
+
             color: #2e7d32;
+
             padding: 4px 8px;
+
             border-radius: 12px;
+
             font-weight: 500;
+
         }
+
+
 
         .article-category {
+
             background: #e3f2fd;
+
             color: #1976d2;
+
             padding: 4px 8px;
+
             border-radius: 12px;
+
             font-weight: 500;
+
             text-transform: capitalize;
+
         }
+
+
 
         .content-section {
+
             margin-bottom: 15px;
+
         }
+
+
 
         .content-section h4 {
+
             margin: 0 0 8px 0;
+
             color: #333;
+
             font-size: 0.9rem;
+
             font-weight: bold;
+
         }
+
+
 
         .staff-info {
+
             background: #fff3e0;
+
             border-left: 4px solid #ff9800;
+
             padding: 10px;
+
             border-radius: 5px;
+
             font-size: 0.85rem;
+
             line-height: 1.4;
+
         }
+
+
 
         .customer-info {
+
             background: #e8f5e8;
+
             border-left: 4px solid #4caf50;
+
             padding: 10px;
+
             border-radius: 5px;
+
             font-size: 0.85rem;
+
             line-height: 1.4;
+
         }
+
+
 
         .key-points {
+
             list-style: none;
+
             padding: 0;
+
             margin: 8px 0;
+
         }
+
+
 
         .key-points li {
+
             padding: 4px 0;
+
             font-size: 0.85rem;
+
             line-height: 1.4;
+
         }
+
+
 
         .pricing-info {
+
             background: #f3e5f5;
+
             border-left: 4px solid #9c27b0;
+
             padding: 10px;
+
             border-radius: 5px;
+
             font-size: 0.85rem;
+
             font-weight: 500;
+
         }
+
+
 
         .availability-info {
+
             background: #e1f5fe;
+
             border-left: 4px solid #00bcd4;
+
             padding: 10px;
+
             border-radius: 5px;
+
             font-size: 0.85rem;
+
             line-height: 1.4;
+
         }
+
+
 
         .search-suggestions {
+
             display: flex;
+
             flex-wrap: wrap;
+
             gap: 8px;
+
             margin: 10px 0;
+
         }
+
+
 
         .suggestion-tag {
+
             background: #e3f2fd;
+
             color: #1976d2;
+
             padding: 6px 12px;
+
             border-radius: 15px;
+
             font-size: 0.8rem;
+
             cursor: pointer;
+
             transition: all 0.3s ease;
+
             border: 1px solid #bbdefb;
+
         }
+
+
 
         .suggestion-tag:hover {
+
             background: #2196f3;
+
             color: white;
+
             transform: translateY(-2px);
+
         }
+
+
 
         .no-results {
+
             text-align: center;
+
             color: #666;
+
             font-style: italic;
+
             padding: 20px;
+
         }
+
+
 
         .typing-indicator {
+
             display: flex;
+
             align-items: center;
+
             gap: 5px;
+
             color: #666;
+
             font-style: italic;
+
         }
+
+
 
         .typing-dots {
+
             display: flex;
+
             gap: 3px;
+
         }
+
+
 
         .typing-dot {
+
             width: 6px;
+
             height: 6px;
+
             border-radius: 50%;
+
             background: #666;
+
             animation: typingDot 1.4s infinite;
+
         }
+
+
 
         .typing-dot:nth-child(2) {
+
             animation-delay: 0.2s;
+
         }
+
+
 
         .typing-dot:nth-child(3) {
+
             animation-delay: 0.4s;
+
         }
+
+
 
         @keyframes typingDot {
+
             0%, 60%, 100% {
+
                 transform: translateY(0);
+
                 opacity: 0.4;
+
             }
+
             30% {
+
                 transform: translateY(-10px);
+
                 opacity: 1;
+
             }
+
         }
+
+
 
         /* Journey Section Styles */
+
         .learning-journey {
+
             background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+
             border-radius: 15px;
+
             padding: 30px;
+
             margin: 30px 0;
+
             box-shadow: 0 10px 30px rgba(33, 150, 243, 0.2);
+
         }
+
+
 
         .journey-timeline {
+
             position: relative;
+
             max-width: 1000px;
+
             margin: 0 auto;
+
         }
+
+
 
         .journey-timeline::before {
+
             content: '';
+
             position: absolute;
+
             left: 30px;
+
             top: 0;
+
             bottom: 0;
+
             width: 4px;
+
             background: linear-gradient(to bottom, #2196f3, #9c27b0);
+
         }
+
+
 
         .journey-item {
+
             position: relative;
+
             margin: 40px 0;
+
             padding-left: 80px;
+
         }
+
+
 
         .journey-dot {
+
             position: absolute;
+
             left: 14px;
+
             top: 0;
+
             width: 32px;
+
             height: 32px;
+
             border-radius: 50%;
+
             border: 4px solid white;
+
             box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+
         }
+
+
 
         .journey-dot.month1 {
+
             background: #4caf50;
+
             animation: journeyPulse 2s infinite;
+
         }
+
+
 
         .journey-dot.month2 {
+
             background: #ff9800;
+
             animation: journeyPulse 2s infinite 0.5s;
+
         }
+
+
 
         .journey-dot.month3 {
+
             background: #2196f3;
+
             animation: journeyPulse 2s infinite 1s;
+
         }
+
+
 
         @keyframes journeyPulse {
+
             0%, 100% { transform: scale(1); }
+
             50% { transform: scale(1.2); }
+
         }
+
+
 
         .journey-content {
+
             background: white;
+
             border-radius: 15px;
+
             padding: 25px;
+
             box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+
             border-left: 4px solid #2196f3;
+
         }
+
+
 
         .journey-content h4 {
+
             margin: 0 0 20px 0;
+
             color: #2196f3;
+
             font-size: 1.3rem;
+
         }
+
+
 
         .journey-details {
+
             display: grid;
+
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+
             gap: 20px;
+
         }
+
+
 
         .learning-block {
+
             background: #f8f9fa;
+
             border-radius: 10px;
+
             padding: 20px;
+
             border-left: 4px solid #4caf50;
+
         }
+
+
 
         .learning-block h5 {
+
             margin: 0 0 15px 0;
+
             color: #333;
+
             font-size: 1.1rem;
+
         }
+
+
 
         .learning-block ul {
+
             margin: 0;
+
             padding-left: 20px;
+
         }
+
+
 
         .learning-block li {
+
             margin: 8px 0;
+
             color: #555;
+
             line-height: 1.5;
+
         }
+
+
 
         .tools-section {
+
             background: linear-gradient(135deg, #f3e5f5, #e8f5e8);
+
             border-radius: 15px;
+
             padding: 30px;
+
             margin: 30px 0;
+
             box-shadow: 0 10px 30px rgba(156, 39, 176, 0.2);
+
         }
+
+
 
         .tools-grid {
+
             display: grid;
+
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+
             gap: 20px;
+
             margin-top: 20px;
+
         }
+
+
 
         .tool-card {
+
             background: white;
+
             border-radius: 15px;
+
             padding: 25px;
+
             text-align: center;
+
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+
             transition: all 0.3s ease;
+
             border: 2px solid transparent;
+
         }
+
+
 
         .tool-card:hover {
+
             transform: translateY(-5px);
+
             border-color: #2196f3;
+
             box-shadow: 0 10px 25px rgba(33, 150, 243, 0.2);
+
         }
+
+
 
         .tool-icon {
+
             font-size: 3rem;
+
             margin-bottom: 15px;
+
         }
+
+
 
         .tool-card h4 {
+
             margin: 0 0 10px 0;
+
             color: #333;
+
             font-size: 1.2rem;
+
         }
+
+
 
         .tool-card p {
+
             margin: 0 0 20px 0;
+
             color: #666;
+
             font-size: 0.9rem;
+
         }
+
+
 
         .skill-level {
+
             background: #e9ecef;
+
             border-radius: 10px;
+
             height: 8px;
+
             overflow: hidden;
+
         }
+
+
 
         .skill-bar {
+
             height: 100%;
+
             background: linear-gradient(90deg, #4caf50, #2196f3);
+
             border-radius: 10px;
+
             transition: width 2s ease-in-out;
+
             animation: skillGrow 2s ease-in-out;
+
         }
+
+
 
         @keyframes skillGrow {
+
             from { width: 0; }
+
         }
+
+
 
         .collaboration-network {
+
             background: linear-gradient(135deg, #fff3e0, #f3e5f5);
+
             border-radius: 15px;
+
             padding: 40px;
+
             margin: 30px 0;
+
             box-shadow: 0 10px 30px rgba(255, 152, 0, 0.2);
+
         }
+
+
 
         .network-diagram {
+
             position: relative;
+
             width: 100%;
+
             height: 400px;
+
             margin: 0 auto;
+
         }
+
+
 
         .network-center {
+
             position: absolute;
+
             top: 50%;
+
             left: 50%;
+
             transform: translate(-50%, -50%);
+
             z-index: 10;
+
         }
+
+
 
         .center-node {
+
             background: linear-gradient(135deg, #2196f3, #21cbf3);
+
             color: white;
+
             border-radius: 50%;
+
             width: 100px;
+
             height: 100px;
+
             display: flex;
+
             flex-direction: column;
+
             align-items: center;
+
             justify-content: center;
+
             box-shadow: 0 5px 20px rgba(33, 150, 243, 0.4);
+
             animation: centerPulse 3s infinite;
+
         }
+
+
 
         @keyframes centerPulse {
+
             0%, 100% { transform: scale(1); }
+
             50% { transform: scale(1.1); }
+
         }
+
+
 
         .node-avatar {
+
             font-size: 2rem;
+
             margin-bottom: 5px;
+
         }
+
+
 
         .node-label {
+
             font-size: 0.8rem;
+
             font-weight: bold;
+
             text-align: center;
+
             line-height: 1.2;
+
         }
+
+
 
         .network-connections {
+
             position: absolute;
+
             top: 0;
+
             left: 0;
+
             width: 100%;
+
             height: 100%;
+
         }
+
+
 
         .connection-line {
+
             position: absolute;
+
             background: linear-gradient(45deg, #2196f3, #9c27b0);
+
             height: 3px;
+
             border-radius: 2px;
+
             opacity: 0.6;
+
             animation: connectionPulse 4s infinite;
+
         }
+
+
 
         @keyframes connectionPulse {
+
             0%, 100% { opacity: 0.6; }
+
             50% { opacity: 1; }
+
         }
+
+
 
         .line-1 { top: 50%; left: 50%; width: 120px; transform: translate(-50%, -50%) rotate(-60deg); }
+
         .line-2 { top: 50%; left: 50%; width: 120px; transform: translate(-50%, -50%) rotate(0deg); }
+
         .line-3 { top: 50%; left: 50%; width: 120px; transform: translate(-50%, -50%) rotate(60deg); }
+
         .line-4 { top: 50%; left: 50%; width: 120px; transform: translate(-50%, -50%) rotate(120deg); }
+
         .line-5 { top: 50%; left: 50%; width: 120px; transform: translate(-50%, -50%) rotate(180deg); }
+
         .line-6 { top: 50%; left: 50%; width: 120px; transform: translate(-50%, -50%) rotate(240deg); }
 
+
+
         .network-nodes {
+
             position: relative;
+
             width: 100%;
+
             height: 100%;
+
         }
+
+
 
         .network-node {
+
             position: absolute;
+
             background: white;
+
             border-radius: 15px;
+
             padding: 15px;
+
             text-align: center;
+
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+
             border: 2px solid #e9ecef;
+
             transition: all 0.3s ease;
+
             min-width: 100px;
+
         }
+
+
 
         .network-node:hover {
+
             transform: scale(1.1);
+
             border-color: #2196f3;
+
             box-shadow: 0 8px 25px rgba(33, 150, 243, 0.3);
+
         }
+
+
 
         .node-1 { top: 10%; left: 20%; }
+
         .node-2 { top: 10%; right: 20%; }
+
         .node-3 { top: 50%; right: 5%; }
+
         .node-4 { bottom: 10%; right: 20%; }
+
         .node-5 { bottom: 10%; left: 20%; }
+
         .node-6 { top: 50%; left: 5%; }
 
+
+
         .network-node .node-avatar {
+
             font-size: 1.5rem;
+
             margin-bottom: 8px;
+
         }
+
+
 
         .network-node .node-label {
+
             font-size: 0.8rem;
+
             font-weight: bold;
+
             color: #333;
+
             margin-bottom: 5px;
+
         }
+
+
 
         .node-role {
+
             font-size: 0.7rem;
+
             color: #666;
+
             font-style: italic;
+
         }
+
+
 
         .challenges-section {
+
             background: linear-gradient(135deg, #ffebee, #f3e5f5);
+
             border-radius: 15px;
+
             padding: 30px;
+
             margin: 30px 0;
+
             box-shadow: 0 10px 30px rgba(244, 67, 54, 0.2);
+
         }
+
+
 
         .challenges-grid {
+
             display: grid;
+
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+
             gap: 20px;
+
             margin-top: 20px;
+
         }
+
+
 
         .challenge-card {
+
             background: white;
+
             border-radius: 15px;
+
             padding: 25px;
+
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+
             transition: all 0.3s ease;
+
             border-left: 4px solid #f44336;
+
         }
+
+
 
         .challenge-card:hover {
+
             transform: translateY(-5px);
+
             box-shadow: 0 10px 25px rgba(244, 67, 54, 0.2);
+
         }
+
+
 
         .challenge-icon {
+
             font-size: 2.5rem;
+
             text-align: center;
+
             margin-bottom: 15px;
+
         }
+
+
 
         .challenge-card h4 {
+
             margin: 0 0 15px 0;
+
             color: #333;
+
             text-align: center;
+
             font-size: 1.2rem;
+
         }
+
+
 
         .challenge-problem, .challenge-solution {
+
             margin: 15px 0;
+
             padding: 15px;
+
             border-radius: 8px;
+
             font-size: 0.9rem;
+
             line-height: 1.5;
+
         }
+
+
 
         .challenge-problem {
+
             background: #ffebee;
+
             border-left: 4px solid #f44336;
+
         }
+
+
 
         .challenge-solution {
+
             background: #e8f5e8;
+
             border-left: 4px solid #4caf50;
+
         }
+
+
 
         .growth-metrics {
+
             background: linear-gradient(135deg, #e8f5e8, #e3f2fd);
+
             border-radius: 15px;
+
             padding: 30px;
+
             color: #333;
+
             box-shadow: 0 10px 30px rgba(76, 175, 80, 0.2);
+
         }
+
+
 
         .growth-card {
+
             background: rgba(255,255,255,0.95) !important;
+
             color: #333 !important;
+
             border: 2px solid rgba(76, 175, 80, 0.3);
+
             backdrop-filter: blur(10px);
+
         }
+
+
 
         .growth-card .metric-value {
+
             color: #2196f3 !important;
+
             text-shadow: none;
+
         }
+
+
 
         .growth-card .metric-label {
+
             color: #555 !important;
+
             font-weight: 600;
+
         }
+
+
 
         .growth-card .metric-improvement {
+
             color: #666 !important;
+
             font-size: 0.8rem;
+
             margin-top: 5px;
+
             opacity: 0.9;
+
         }
+
+
 
         @media (max-width: 768px) {
+
             .container {
+
                 padding: 10px;
+
             }
+
+
 
             .header h1 {
+
                 font-size: 1.8rem;
+
                 margin-bottom: 8px;
+
             }
 
+
+
             .header p {
+
                 font-size: 1rem;
+
             }
+
+
 
             .scenario-toggle {
+
                 flex-wrap: wrap;
+
                 gap: 8px;
+
                 margin-bottom: 20px;
+
             }
+
+
 
             .toggle-btn {
+
                 padding: 8px 12px;
+
                 font-size: 0.85rem;
+
                 flex: 1;
+
                 min-width: 120px;
+
             }
 
+
+
             .simulation-area {
+
                 padding: 15px;
+
                 margin-bottom: 20px;
+
             }
+
+
 
             .workspace, .call-workspace {
+
                 grid-template-columns: 1fr;
+
                 gap: 15px;
+
             }
+
+
 
             .agent-panel, .system-panel, .agent-screen, .customer-side {
+
                 padding: 15px;
+
             }
+
+
 
             .screen-header, .customer-header {
+
                 flex-direction: column;
+
                 align-items: flex-start;
+
                 gap: 8px;
+
             }
+
+
 
             .call-header {
+
                 padding: 10px;
+
             }
+
+
 
             .call-status {
+
                 flex-direction: column;
+
                 gap: 8px;
+
                 text-align: center;
+
             }
+
+
 
             .live-call-demo, .success-call-demo, .developer-dependency, 
+
             .wordpress-demo, .enhanced-chatbot-demo, .learning-journey,
+
             .tools-section, .collaboration-network, .challenges-section,
+
             .pain-metrics, .success-metrics, .growth-metrics {
+
                 padding: 20px;
+
                 margin: 20px 0;
+
             }
+
+
 
             .metrics-grid {
+
                 grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+
                 gap: 15px;
+
             }
+
+
 
             .metric-card {
+
                 padding: 15px;
+
             }
 
+
+
             .metric-value {
+
                 font-size: 1.5rem;
+
             }
+
+
 
             .metric-label {
+
                 font-size: 0.8rem;
+
             }
+
+
 
             .dependency-timeline {
+
                 padding: 0 10px;
+
             }
+
+
 
             .timeline-item {
+
                 padding-left: 50px;
+
                 margin: 20px 0;
+
             }
+
+
 
             .timeline-content {
+
                 padding: 15px;
+
             }
+
+
 
             .journey-timeline::before {
+
                 left: 20px;
+
             }
+
+
 
             .journey-dot {
+
                 left: 4px;
+
                 width: 28px;
+
                 height: 28px;
+
             }
+
+
 
             .journey-item {
+
                 padding-left: 60px;
+
                 margin: 30px 0;
+
             }
+
+
 
             .journey-content {
+
                 padding: 20px;
+
             }
+
+
 
             .journey-details {
+
                 grid-template-columns: 1fr;
+
                 gap: 15px;
+
             }
+
+
 
             .learning-block {
+
                 padding: 15px;
+
             }
 
+
+
             .tools-grid {
+
                 grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+
                 gap: 15px;
+
             }
+
+
 
             .tool-card {
+
                 padding: 20px;
+
             }
+
+
 
             .tool-icon {
+
                 font-size: 2.5rem;
+
             }
+
+
 
             .challenges-grid {
+
                 grid-template-columns: 1fr;
+
                 gap: 15px;
+
             }
+
+
 
             .challenge-card {
+
                 padding: 20px;
+
             }
+
+
 
             .challenge-icon {
+
                 font-size: 2rem;
+
             }
+
+
 
             .network-diagram {
+
                 height: 280px;
+
             }
 
+
+
             .center-node {
+
                 width: 80px;
+
                 height: 80px;
+
             }
+
+
 
             .node-avatar {
+
                 font-size: 1.5rem;
+
             }
+
+
 
             .node-label {
+
                 font-size: 0.7rem;
+
             }
 
+
+
             .network-node {
+
                 min-width: 70px;
+
                 padding: 8px;
+
             }
+
+
 
             .network-node .node-avatar {
+
                 font-size: 1.2rem;
+
             }
+
+
 
             .network-node .node-label {
+
                 font-size: 0.65rem;
+
             }
+
+
 
             .node-role {
+
                 font-size: 0.55rem;
+
             }
+
+
 
             .connection-line {
+
                 height: 2px;
+
             }
+
+
 
             .line-1, .line-2, .line-3, .line-4, .line-5, .line-6 {
+
                 width: 90px;
+
             }
+
+
 
             .wp-editor {
+
                 margin-top: 10px;
+
             }
+
+
 
             .editor-toolbar {
+
                 padding: 8px;
+
                 flex-wrap: wrap;
+
                 gap: 5px;
+
             }
+
+
 
             .wp-btn {
+
                 padding: 4px 10px;
+
                 font-size: 0.8rem;
+
             }
+
+
 
             .update-scenario {
+
                 gap: 15px;
+
             }
+
+
 
             .scenario-step {
+
                 flex-direction: column;
+
                 gap: 10px;
+
             }
+
+
 
             .step-number {
+
                 width: 35px;
+
                 height: 35px;
+
                 font-size: 1rem;
+
                 align-self: flex-start;
+
             }
+
+
 
             .step-content {
+
                 padding: 15px;
+
             }
+
+
 
             .chatbot-interface {
+
                 padding: 15px;
+
             }
+
+
 
             .package-grid {
+
                 grid-template-columns: 1fr;
+
                 gap: 10px;
+
             }
+
+
 
             .package-card {
+
                 padding: 12px;
+
             }
+
+
 
             .bot-message {
+
                 flex-direction: column;
+
                 gap: 10px;
+
             }
+
+
 
             .bot-avatar {
+
                 width: 35px;
+
                 height: 35px;
+
                 font-size: 1rem;
+
                 align-self: flex-start;
+
             }
 
+
+
             .savings-highlight {
+
                 font-size: 2.5rem;
+
                 margin: 15px 0;
+
             }
+
+
 
             .impact-section {
+
                 padding: 20px;
+
             }
+
+
 
             .impact-section p {
+
                 font-size: 1.1rem;
+
             }
+
+
 
             .impact-section ul {
+
                 padding-left: 20px;
+
             }
+
+
 
             .impact-section li {
+
                 margin: 8px 0;
+
                 font-size: 0.9rem;
+
             }
+
+
 
             .bot-toggle {
+
                 width: 50px;
+
                 height: 50px;
+
                 bottom: 15px;
+
                 right: 15px;
+
             }
+
+
 
             .bot-icon {
+
                 font-size: 1.4rem;
+
             }
 
+
+
             .bot-tooltip {
+
                 bottom: 60px;
+
                 right: -20px;
+
                 padding: 8px 12px;
+
                 font-size: 0.8rem;
+
                 white-space: normal;
+
                 width: 150px;
+
                 text-align: center;
+
             }
+
+
 
             .tooltip-text {
+
                 font-size: 0.75rem;
+
             }
 
+
+
             .floating-chatbot {
+
                 width: calc(100vw - 20px);
+
                 height: calc(100vh - 100px);
+
                 bottom: 10px;
+
                 right: 10px;
+
                 left: 10px;
+
                 max-width: 350px;
+
                 max-height: 500px;
+
             }
+
+
 
             .chatbot-floating-header {
+
                 padding: 12px;
+
             }
+
+
 
             .chatbot-title {
+
                 font-size: 0.9rem;
+
             }
+
+
 
             .chatbot-messages {
+
                 padding: 12px;
+
             }
+
+
 
             .chatbot-input-area {
+
                 padding: 12px;
+
             }
+
+
 
             .chatbot-search-input {
+
                 padding: 10px;
+
                 font-size: 14px;
+
             }
+
+
 
             .chat-message {
+
                 margin-bottom: 12px;
+
             }
+
+
 
             .bot-msg, .user-msg {
+
                 padding: 10px 12px;
+
                 font-size: 0.85rem;
+
             }
+
+
 
             .package-result {
+
                 padding: 12px;
+
                 margin: 8px 0;
+
             }
+
+
 
             .package-header {
+
                 flex-direction: column;
+
                 align-items: flex-start;
+
                 gap: 5px;
+
             }
+
+
 
             .package-badge {
+
                 align-self: flex-start;
+
             }
+
+
 
             .article-result {
+
                 padding: 10px;
+
                 margin: 6px 0;
+
             }
+
+
 
             .article-header {
+
                 flex-direction: column;
+
                 align-items: flex-start;
+
                 gap: 5px;
+
             }
+
+
 
             .article-expand-icon {
+
                 align-self: flex-end;
+
                 margin-top: -20px;
+
             }
+
+
 
             .article-full-content {
+
                 margin-top: 12px;
+
                 padding-top: 12px;
+
             }
+
+
 
             .content-section {
+
                 margin-bottom: 12px;
+
             }
+
+
 
             .content-section h4 {
+
                 font-size: 0.85rem;
+
             }
+
+
 
             .staff-info, .customer-info, .pricing-info, .availability-info {
+
                 padding: 8px;
+
                 font-size: 0.8rem;
+
             }
+
+
 
             .key-points li {
+
                 font-size: 0.8rem;
+
                 margin: 6px 0;
+
             }
+
+
 
             .search-suggestions {
+
                 gap: 6px;
+
                 margin: 8px 0;
+
             }
+
+
 
             .suggestion-tag, .suggestion-chip {
+
                 padding: 4px 8px;
+
                 font-size: 0.7rem;
+
             }
+
+
 
             .typing-indicator {
+
                 font-size: 0.8rem;
+
             }
+
+
 
             .typing-dot {
+
                 width: 5px;
+
                 height: 5px;
+
             }
+
+
 
             .no-results {
+
                 padding: 15px;
+
                 font-size: 0.85rem;
+
             }
+
+
 
             .message {
+
                 padding: 10px;
+
                 font-size: 0.85rem;
+
                 max-width: 90%;
+
             }
+
+
 
             .thought-bubble, .reaction-bubble {
+
                 padding: 12px;
+
                 font-size: 0.85rem;
+
             }
+
+
 
             .thought-bubble p, .reaction-bubble p {
+
                 font-size: 0.8rem;
+
             }
+
+
 
             .email-item {
+
                 flex-direction: column;
+
                 gap: 5px;
+
                 padding: 6px 0;
+
             }
+
+
 
             .package-item {
+
                 flex-direction: column;
+
                 align-items: flex-start;
+
                 gap: 5px;
+
                 padding: 10px;
+
             }
+
+
 
             .quick-response {
+
                 flex-direction: column;
+
                 gap: 8px;
+
                 padding: 8px;
+
                 text-align: center;
+
             }
+
+
 
             .hold-indicator {
+
                 padding: 12px;
+
                 margin: 12px 0;
+
             }
+
+
 
             .conversation-flow {
+
                 margin-top: 15px;
+
             }
+
+
 
             .old-knowledge-base, .new-knowledge-base {
+
                 padding: 12px;
+
                 margin-bottom: 12px;
+
             }
+
+
 
             .search-box input {
+
                 padding: 6px;
+
                 font-size: 0.85rem;
+
             }
+
+
 
             .search-results {
+
                 padding: 8px;
+
                 font-size: 0.8rem;
+
             }
+
+
 
             .chatbot-assist {
+
                 padding: 12px;
+
             }
+
+
 
             .chatbot-suggestions {
+
                 gap: 6px;
+
             }
+
         }
+
+
 
         @media (max-width: 480px) {
+
             .header h1 {
+
                 font-size: 1.5rem;
+
             }
+
+
 
             .header p {
+
                 font-size: 0.9rem;
+
             }
+
+
 
             .toggle-btn {
+
                 padding: 6px 8px;
+
                 font-size: 0.8rem;
+
                 min-width: 100px;
+
             }
+
+
 
             .simulation-area {
+
                 padding: 10px;
+
             }
+
+
 
             .metrics-grid {
+
                 grid-template-columns: 1fr 1fr;
+
                 gap: 10px;
+
             }
+
+
 
             .metric-card {
+
                 padding: 12px;
+
             }
+
+
 
             .metric-value {
+
                 font-size: 1.3rem;
+
             }
+
+
 
             .savings-highlight {
+
                 font-size: 2rem;
+
             }
+
+
 
             .tools-grid {
+
                 grid-template-columns: 1fr;
+
             }
+
+
 
             .network-diagram {
+
                 height: 250px;
+
             }
+
+
 
             .center-node {
+
                 width: 70px;
+
                 height: 70px;
+
             }
+
+
 
             .network-node {
+
                 min-width: 60px;
+
                 padding: 6px;
+
             }
+
+
 
             .floating-chatbot {
+
                 width: calc(100vw - 10px);
+
                 height: calc(100vh - 80px);
+
                 bottom: 5px;
+
                 right: 5px;
+
                 left: 5px;
+
             }
+
+
 
             .bot-tooltip {
+
                 width: 120px;
+
                 right: -15px;
+
             }
+
         }
+
     </style>
+
 </head>
+
 <body>
+
     <main class="container">
+
         <header class="header">
+
             <h1>Knowledge Base Transformation</h1>
+
             <p>From Outdated HTML to Modern WordPress Solution</p>
+
         </header>
 
+
+
         <nav class="scenario-toggle">
+
             <button class="toggle-btn active" onclick="showScenario('before')">Before Transformation</button>
+
             <button class="toggle-btn" onclick="showScenario('journey')">My Journey</button>
+
             <button class="toggle-btn" onclick="showScenario('after')">After Transformation</button>
+
             <button class="toggle-btn" onclick="showScenario('impact')">Business Impact</button>
+
+
+
         </nav>
 
+
+
         <section id="before-scenario" class="scenario-content active">
+
             <div class="simulation-area">
+
                 <h2 style="text-align: center; color: #dc3545; margin-bottom: 30px;">❌ Before: The Daily Nightmare</h2>
+
                 
+
                 <!-- Live Call Simulation -->
+
                 <div class="live-call-demo">
+
                     <div class="call-header">
+
                         <div class="call-status">
+
                             <span class="status-dot blinking-red"></span>
+
                             <span>Live Call in Progress</span>
+
                             <div class="call-timer" id="call-timer">00:00</div>
+
                         </div>
+
                     </div>
+
                     
+
                     <div class="call-workspace">
+
                         <div class="agent-screen">
+
                             <div class="screen-header">
+
                                 <span>🎧 Agent: Sarah</span>
+
                                 <span class="stress-indicator">Stress Level: <span class="stress-high">HIGH</span></span>
+
                             </div>
+
                             
+
                             <div class="old-knowledge-base">
+
                                 <div class="kb-header">📄 HTML Knowledge Base (Last Updated: 3 months ago)</div>
+
                                 <div class="kb-content">
+
                                     <div class="outdated-info">
+
                                         <h4>Internet Packages</h4>
+
                                         <p class="crossed-out">Basic Package: 5 Mbps - Rs. 1,500/month ❌</p>
+
                                         <p class="crossed-out">Premium Package: 20 Mbps - Rs. 2,500/month ❌</p>
+
                                         <p style="color: #dc3545; font-weight: bold;">⚠️ Information may be outdated</p>
+
                                     </div>
+
                                 </div>
+
                                 
+
                                 <div class="search-attempts">
+
                                     <div class="search-box">
+
                                         <input type="text" placeholder="Searching for new fiber packages..." readonly>
+
                                         <div class="search-results">
+
                                             <p style="color: #dc3545;">❌ No results found</p>
+
                                             <p style="color: #dc3545;">❌ Information not available</p>
+
                                         </div>
+
                                     </div>
+
                                 </div>
+
                             </div>
+
                             
+
                             <div class="email-panic">
+
                                 <div class="email-header">📧 Frantically checking emails...</div>
+
                                 <div class="email-list">
+
                                     <div class="email-item">
+
                                         <span>📧 New Package Launch - 2 weeks ago</span>
+
                                         <span class="email-status">Opening...</span>
+
                                     </div>
+
                                     <div class="email-item">
+
                                         <span>📧 Price Update - 1 week ago</span>
+
                                         <span class="email-status">Searching...</span>
+
                                     </div>
+
                                     <div class="email-item">
+
                                         <span>📧 Fiber Packages Info - 3 days ago</span>
+
                                         <span class="email-status">Loading...</span>
+
                                     </div>
+
                                 </div>
+
                             </div>
+
                         </div>
+
                         
+
                         <div class="customer-side">
+
                             <div class="customer-header">
+
                                 <span>📞 Customer: Ahmad Khan</span>
+
                                 <span class="patience-meter">Patience: <span class="patience-low">VERY LOW</span></span>
+
                             </div>
+
                             
+
                             <div class="conversation-flow">
+
                                 <div class="message customer-msg">
+
                                     "Hi, I need information about your new fiber packages. What speeds and prices do you have?"
+
                                 </div>
+
                                 
+
                                 <div class="message agent-msg typing">
+
                                     "Let me check that for you... please hold on..."
+
                                 </div>
+
                                 
+
                                 <div class="hold-indicator">
+
                                     <div class="hold-timer">Customer on hold: <span id="hold-timer">0:45</span></div>
+
                                     <div class="hold-music">🎵 ♪ ♫ ♪ (Hold music playing)</div>
+
                                 </div>
+
                                 
+
                                 <div class="customer-thoughts">
+
                                     <div class="thought-bubble">
+
                                         <p>"Why is this taking so long?"</p>
+
                                         <p>"Don't they know their own packages?"</p>
+
                                         <p>"I might just go to another provider..."</p>
+
                                     </div>
+
                                 </div>
+
                             </div>
+
                         </div>
+
                     </div>
+
                 </div>
+
+
 
                 <!-- Developer Dependency Hell -->
+
                 <div class="developer-dependency">
+
                     <h3 style="text-align: center; color: #dc3545; margin: 30px 0;">🔥 The Developer Dependency Crisis</h3>
+
                     <div class="dependency-timeline">
+
                         <div class="timeline-item">
+
                             <div class="timeline-dot red"></div>
+
                             <div class="timeline-content">
+
                                 <h4>Day 1: New Product Launch</h4>
+
                                 <p>Marketing launches new fiber packages. Knowledge base still shows old info.</p>
+
                             </div>
+
                         </div>
+
                         <div class="timeline-item">
+
                             <div class="timeline-dot red"></div>
+
                             <div class="timeline-content">
+
                                 <h4>Day 3: Training Team Panic</h4>
+
                                 <p>"We need to update the knowledge base ASAP! Agents are giving wrong information!"</p>
+
                             </div>
+
                         </div>
+
                         <div class="timeline-item">
+
                             <div class="timeline-dot red"></div>
+
                             <div class="timeline-content">
+
                                 <h4>Day 5: Developer Hunt</h4>
+
                                 <p>Trying to find available developer... All busy with other projects.</p>
+
                             </div>
+
                         </div>
+
                         <div class="timeline-item">
+
                             <div class="timeline-dot red"></div>
+
                             <div class="timeline-content">
+
                                 <h4>Day 12: Finally Got Developer</h4>
+
                                 <p>Developer available! Needs 2 days to understand the HTML structure.</p>
+
                             </div>
+
                         </div>
+
                         <div class="timeline-item">
+
                             <div class="timeline-dot red"></div>
+
                             <div class="timeline-content">
+
                                 <h4>Day 18: Update Complete</h4>
+
                                 <p>Knowledge base updated. Cost: 50,000 PKR. Next product launch in 2 weeks... 😰</p>
+
                             </div>
+
                         </div>
+
                     </div>
+
                 </div>
+
+
 
                 <!-- Real-time Metrics Dashboard -->
+
                 <div class="pain-metrics">
+
                     <h3 style="text-align: center; margin-bottom: 20px;">📊 Real-time Pain Metrics</h3>
+
                     <div class="metrics-grid">
+
                         <div class="metric-card pain-card">
+
                             <div class="metric-value negative" id="aht-before">8:45</div>
+
                             <div class="metric-label">Average Handle Time</div>
+
                             <div class="metric-trend">📈 +2:30 from target</div>
+
                         </div>
+
                         <div class="metric-card pain-card">
+
                             <div class="metric-value negative" id="accuracy-before">67%</div>
+
                             <div class="metric-label">Information Accuracy</div>
+
                             <div class="metric-trend">📉 -33% from standard</div>
+
                         </div>
+
                         <div class="metric-card pain-card">
+
                             <div class="metric-value negative" id="satisfaction-before">2.1/5</div>
+
                             <div class="metric-label">Agent Satisfaction</div>
+
                             <div class="metric-trend">😞 Critical Level</div>
+
                         </div>
+
                         <div class="metric-card pain-card">
+
                             <div class="metric-value negative" id="cost-before">₨ 2.5M</div>
+
                             <div class="metric-label">Monthly Operational Cost</div>
+
                             <div class="metric-trend">💸 +40% over budget</div>
+
                         </div>
+
                     </div>
+
                 </div>
+
             </div>
+
         </section>
+
+
 
         <section id="journey-scenario" class="scenario-content">
+
             <div class="simulation-area">
+
                 <h2 style="text-align: center; color: #2196f3; margin-bottom: 30px;">🚀 My Transformation Journey</h2>
+
                 
+
                 <!-- Learning Journey Timeline -->
+
                 <div class="learning-journey">
+
                     <h3 style="text-align: center; color: #2196f3; margin: 30px 0;">📚 3-Month Learning & Implementation Journey</h3>
+
                     <div class="journey-timeline">
+
                         <div class="journey-item">
+
                             <div class="journey-dot month1"></div>
+
                             <div class="journey-content">
+
                                 <h4>🎯 Month 1: Foundation & Learning</h4>
+
                                 <div class="journey-details">
+
                                     <div class="learning-block">
+
                                         <h5>🤝 Collaboration Setup</h5>
+
                                         <ul>
+
                                             <li>✅ Partnered with in-house developer for technical guidance</li>
+
                                             <li>✅ Set up daily sync meetings with development team</li>
+
                                             <li>✅ Established direct communication with IT room for instant support</li>
+
                                         </ul>
+
                                     </div>
+
                                     <div class="learning-block">
+
                                         <h5>📖 WordPress Mastery</h5>
+
                                         <ul>
+
                                             <li>✅ Learned WordPress admin panel and content management</li>
+
                                             <li>✅ Mastered custom post types and fields for knowledge articles</li>
+
                                             <li>✅ Studied responsive design principles for mobile optimization</li>
+
                                         </ul>
+
                                     </div>
+
                                     <div class="learning-block">
+
                                         <h5>🔍 Stakeholder Engagement</h5>
+
                                         <ul>
+
                                             <li>✅ Regular meetings with SMEs (Subject Matter Experts)</li>
+
                                             <li>✅ Collaborated with product owners for accurate information</li>
+
                                             <li>✅ Gathered requirements from training team and agents</li>
+
                                         </ul>
+
                                     </div>
+
                                 </div>
+
                             </div>
+
                         </div>
+
                         
+
                         <div class="journey-item">
+
                             <div class="journey-dot month2"></div>
+
                             <div class="journey-content">
+
                                 <h4>🛠️ Month 2: Development & Integration</h4>
+
                                 <div class="journey-details">
+
                                     <div class="learning-block">
+
                                         <h5>🤖 Google APIs Integration</h5>
+
                                         <ul>
+
                                             <li>✅ Learned Google Dialogflow for chatbot development</li>
+
                                             <li>✅ Integrated Google Search API for intelligent content discovery</li>
+
                                             <li>✅ Implemented Google Analytics for usage tracking</li>
+
                                             <li>✅ Set up Google Cloud Console and API management</li>
+
                                         </ul>
+
                                     </div>
+
                                     <div class="learning-block">
+
                                         <h5>💻 Hands-on Development</h5>
+
                                         <ul>
+
                                             <li>✅ Spent countless hours in IT room for real-time problem solving</li>
+
                                             <li>✅ Learned to troubleshoot API integration issues on the spot</li>
+
                                             <li>✅ Developed custom WordPress plugins for specific needs</li>
+
                                             <li>✅ Created responsive layouts for different screen sizes</li>
+
                                         </ul>
+
                                     </div>
+
                                     <div class="learning-block">
+
                                         <h5>📊 Manager Feedback Loop</h5>
+
                                         <ul>
+
                                             <li>✅ Weekly progress reviews with manager</li>
+
                                             <li>✅ Incorporated feedback for user experience improvements</li>
+
                                             <li>✅ Adjusted features based on business requirements</li>
+
                                         </ul>
+
                                     </div>
+
                                 </div>
+
                             </div>
+
                         </div>
+
                         
+
                         <div class="journey-item">
+
                             <div class="journey-dot month3"></div>
+
                             <div class="journey-content">
+
                                 <h4>🧪 Month 3: Testing & Refinement</h4>
+
                                 <div class="journey-details">
+
                                     <div class="learning-block">
+
                                         <h5>👥 Small Group Testing</h5>
+
                                         <ul>
+
                                             <li>✅ Selected 10 agents for pilot testing program</li>
+
                                             <li>✅ Conducted daily feedback sessions with test group</li>
+
                                             <li>✅ Documented all issues and improvement suggestions</li>
+
                                             <li>✅ Refined chatbot responses based on real queries</li>
+
                                         </ul>
+
                                     </div>
+
                                     <div class="learning-block">
+
                                         <h5>🔧 Continuous Improvement</h5>
+
                                         <ul>
+
                                             <li>✅ Fixed bugs and glitches in real-time with IT team</li>
+
                                             <li>✅ Optimized search algorithms for better accuracy</li>
+
                                             <li>✅ Enhanced mobile responsiveness based on user feedback</li>
+
                                             <li>✅ Improved loading speeds and performance</li>
+
                                         </ul>
+
                                     </div>
+
                                     <div class="learning-block">
+
                                         <h5>📈 Final Validation</h5>
+
                                         <ul>
+
                                             <li>✅ Achieved 95% accuracy in test scenarios</li>
+
                                             <li>✅ Reduced average search time from 3 minutes to 15 seconds</li>
+
                                             <li>✅ Got approval from all stakeholders for full rollout</li>
+
                                         </ul>
+
                                     </div>
+
                                 </div>
+
                             </div>
+
                         </div>
+
                     </div>
+
                 </div>
+
+
 
                 <!-- Tools & Technologies Used -->
+
                 <div class="tools-section">
+
                     <h3 style="text-align: center; color: #2196f3; margin: 30px 0;">🛠️ Tools & Technologies Mastered</h3>
+
                     <div class="tools-grid">
+
                         <div class="tool-card">
+
                             <div class="tool-icon">🌐</div>
+
                             <h4>WordPress</h4>
+
                             <p>Content Management System</p>
+
                             <div class="skill-level">
+
                                 <div class="skill-bar" style="width: 90%"></div>
+
                             </div>
+
                         </div>
+
                         <div class="tool-card">
+
                             <div class="tool-icon">🤖</div>
+
                             <h4>Google Dialogflow</h4>
+
                             <p>AI Chatbot Development</p>
+
                             <div class="skill-level">
+
                                 <div class="skill-bar" style="width: 85%"></div>
+
                             </div>
+
                         </div>
+
                         <div class="tool-card">
+
                             <div class="tool-icon">🔍</div>
+
                             <h4>Google Search API</h4>
+
                             <p>Intelligent Content Discovery</p>
+
                             <div class="skill-level">
+
                                 <div class="skill-bar" style="width: 80%"></div>
+
                             </div>
+
                         </div>
+
                         <div class="tool-card">
+
                             <div class="tool-icon">📊</div>
+
                             <h4>Google Analytics</h4>
+
                             <p>Usage Tracking & Insights</p>
+
                             <div class="skill-level">
+
                                 <div class="skill-bar" style="width: 75%"></div>
+
                             </div>
+
                         </div>
+
                         <div class="tool-card">
+
                             <div class="tool-icon">☁️</div>
+
                             <h4>Google Cloud Console</h4>
+
                             <p>API Management & Hosting</p>
+
                             <div class="skill-level">
+
                                 <div class="skill-bar" style="width: 70%"></div>
+
                             </div>
+
                         </div>
+
                         <div class="tool-card">
+
                             <div class="tool-icon">📱</div>
+
                             <h4>Responsive Design</h4>
+
                             <p>Mobile-First Development</p>
+
                             <div class="skill-level">
+
                                 <div class="skill-bar" style="width: 85%"></div>
+
                             </div>
+
                         </div>
+
                     </div>
+
                 </div>
+
+
 
                 <!-- Collaboration Network -->
+
                 <div class="collaboration-network">
+
                     <h3 style="text-align: center; color: #2196f3; margin: 30px 0;">🤝 My Collaboration Network</h3>
+
                     <div class="network-diagram">
+
                         <div class="network-center">
+
                             <div class="center-node">
+
                                 <div class="node-avatar">👨‍💻</div>
+
                                 <div class="node-label">Me<br><small>Project Lead</small></div>
+
                             </div>
+
                         </div>
+
                         <div class="network-connections">
+
                             <div class="connection-line line-1"></div>
+
                             <div class="connection-line line-2"></div>
+
                             <div class="connection-line line-3"></div>
+
                             <div class="connection-line line-4"></div>
+
                             <div class="connection-line line-5"></div>
+
                             <div class="connection-line line-6"></div>
+
                         </div>
+
                         <div class="network-nodes">
+
                             <div class="network-node node-1">
+
                                 <div class="node-avatar">👨‍💻</div>
+
                                 <div class="node-label">In-House<br>Developer</div>
+
                                 <div class="node-role">Technical Mentor</div>
+
                             </div>
+
                             <div class="network-node node-2">
+
                                 <div class="node-avatar">👔</div>
+
                                 <div class="node-label">Manager</div>
+
                                 <div class="node-role">Feedback & Approval</div>
+
                             </div>
+
                             <div class="network-node node-3">
+
                                 <div class="node-avatar">🎓</div>
+
                                 <div class="node-label">SMEs</div>
+
                                 <div class="node-role">Domain Expertise</div>
+
                             </div>
+
                             <div class="network-node node-4">
+
                                 <div class="node-avatar">📦</div>
+
                                 <div class="node-label">Product<br>Owners</div>
+
                                 <div class="node-role">Requirements</div>
+
                             </div>
+
                             <div class="network-node node-5">
+
                                 <div class="node-avatar">🖥️</div>
+
                                 <div class="node-label">IT Team</div>
+
                                 <div class="node-role">Infrastructure Support</div>
+
                             </div>
+
                             <div class="network-node node-6">
+
                                 <div class="node-avatar">👥</div>
+
                                 <div class="node-label">Test Group</div>
+
                                 <div class="node-role">User Feedback</div>
+
                             </div>
+
                         </div>
+
                     </div>
+
                 </div>
+
+
 
                 <!-- Key Challenges & Solutions -->
+
                 <div class="challenges-section">
+
                     <h3 style="text-align: center; color: #2196f3; margin: 30px 0;">💪 Challenges Overcome</h3>
+
                     <div class="challenges-grid">
+
                         <div class="challenge-card">
+
                             <div class="challenge-icon">🧠</div>
+
                             <h4>Learning Curve</h4>
+
                             <div class="challenge-problem">
+
                                 <strong>Challenge:</strong> No prior WordPress or API experience
+
                             </div>
+
                             <div class="challenge-solution">
+
                                 <strong>Solution:</strong> Dedicated 2-3 hours daily learning, hands-on practice with developer mentorship
+
                             </div>
+
                         </div>
+
                         <div class="challenge-card">
+
                             <div class="challenge-icon">🔧</div>
+
                             <h4>Technical Glitches</h4>
+
                             <div class="challenge-problem">
+
                                 <strong>Challenge:</strong> API integration failures and bugs
+
                             </div>
+
                             <div class="challenge-solution">
+
                                 <strong>Solution:</strong> Established permanent desk in IT room for instant troubleshooting
+
                             </div>
+
                         </div>
+
                         <div class="challenge-card">
+
                             <div class="challenge-icon">👥</div>
+
                             <h4>Stakeholder Alignment</h4>
+
                             <div class="challenge-problem">
+
                                 <strong>Challenge:</strong> Different requirements from various teams
+
                             </div>
+
                             <div class="challenge-solution">
+
                                 <strong>Solution:</strong> Regular cross-functional meetings and requirement documentation
+
                             </div>
+
                         </div>
+
                         <div class="challenge-card">
+
                             <div class="challenge-icon">⏰</div>
+
                             <h4>Time Constraints</h4>
+
                             <div class="challenge-problem">
+
                                 <strong>Challenge:</strong> Tight 3-month deadline with learning curve
+
                             </div>
+
                             <div class="challenge-solution">
+
                                 <strong>Solution:</strong> Parallel learning and development, weekend dedication
+
                             </div>
+
                         </div>
+
                     </div>
+
                 </div>
+
+
 
                 <!-- Personal Growth Metrics -->
+
                 <div class="growth-metrics">
+
                     <h3 style="text-align: center; color: #2196f3; margin: 30px 0;">📈 Personal Growth Achieved</h3>
+
                     <div class="metrics-grid">
+
                         <div class="metric-card growth-card">
+
                             <div class="metric-value positive">6</div>
+
                             <div class="metric-label">New Technologies Learned</div>
+
                             <div class="metric-improvement">WordPress, APIs, Cloud Services</div>
+
                         </div>
+
                         <div class="metric-card growth-card">
+
                             <div class="metric-value positive">200+</div>
+
                             <div class="metric-label">Hours of Learning</div>
+
                             <div class="metric-improvement">Self-study + Hands-on Practice</div>
+
                         </div>
+
                         <div class="metric-card growth-card">
+
                             <div class="metric-value positive">15+</div>
+
                             <div class="metric-label">Stakeholders Collaborated</div>
+
                             <div class="metric-improvement">Cross-functional Teamwork</div>
+
                         </div>
+
                         <div class="metric-card growth-card">
+
                             <div class="metric-value positive">100%</div>
+
                             <div class="metric-label">Project Success Rate</div>
+
                             <div class="metric-improvement">On-time, On-budget Delivery</div>
+
                         </div>
+
                     </div>
+
                 </div>
+
             </div>
+
         </section>
 
+
+
         <section id="after-scenario" class="scenario-content">
+
             <div class="simulation-area">
+
                 <h2 style="text-align: center; color: #28a745; margin-bottom: 30px;">✅ After: The Transformation Success</h2>
+
                 
+
                 <!-- Live Call Success Demo -->
+
                 <div class="success-call-demo">
+
                     <div class="call-header success">
+
                         <div class="call-status">
+
                             <span class="status-dot blinking-green"></span>
+
                             <span>Live Call - Smooth Operation</span>
+
                             <div class="call-timer success-timer" id="success-call-timer">00:00</div>
+
                         </div>
+
                     </div>
+
                     
+
                     <div class="call-workspace">
+
                         <div class="agent-screen success">
+
                             <div class="screen-header">
+
                                 <span>🎧 Agent: Sarah</span>
+
                                 <span class="stress-indicator">Confidence Level: <span class="confidence-high">EXCELLENT</span></span>
+
                             </div>
+
                             
+
                             <div class="new-knowledge-base">
+
                                 <div class="kb-header success">🌐 WordPress Knowledge Base (Live Updates)</div>
+
                                 <div class="kb-content">
+
                                     <div class="current-info">
+
                                         <h4>✅ Current Internet Packages</h4>
+
                                         <div class="package-item">
+
                                             <span class="package-name">Fiber Basic: 25 Mbps</span>
+
                                             <span class="package-price">Rs. 2,000/month</span>
+
                                             <span class="package-status">✅ Active</span>
+
                                         </div>
+
                                         <div class="package-item">
+
                                             <span class="package-name">Fiber Premium: 100 Mbps</span>
+
                                             <span class="package-price">Rs. 4,500/month</span>
+
                                             <span class="package-status">✅ Active</span>
+
                                         </div>
+
                                         <div class="package-item featured">
+
                                             <span class="package-name">🔥 NEW: Fiber Ultra: 100 Mbps</span>
+
                                             <span class="package-price">Rs. 8,000/month</span>
+
                                             <span class="package-status">🆕 Just Launched!</span>
+
                                         </div>
+
                                     </div>
+
                                 </div>
+
                                 
+
                                 <div class="instant-search">
+
                                     <div class="search-box success">
+
                                         <input type="text" value="fiber packages" readonly>
+
                                         <div class="search-results success">
+
                                             <p style="color: #28a745;">✅ 3 packages found instantly</p>
+
                                             <p style="color: #28a745;">✅ All information current</p>
+
                                         </div>
+
                                     </div>
+
                                 </div>
+
                             </div>
+
                             
+
                             <div class="chatbot-assist">
+
                                 <div class="chatbot-header">🤖 AI Assistant Active</div>
+
                                 <div class="chatbot-suggestions">
+
                                     <div class="suggestion-chip">📦 Package Comparison</div>
+
                                     <div class="suggestion-chip">💰 Pricing Calculator</div>
+
                                     <div class="suggestion-chip">📍 Coverage Check</div>
+
                                 </div>
+
                             </div>
+
                         </div>
+
                         
+
                         <div class="customer-side success">
+
                             <div class="customer-header">
+
                                 <span>📞 Customer: Ahmad Khan</span>
+
                                 <span class="satisfaction-meter">Satisfaction: <span class="satisfaction-high">VERY HIGH</span></span>
+
                             </div>
+
                             
+
                             <div class="conversation-flow">
+
                                 <div class="message customer-msg">
+
                                     "Hi, I need information about your new fiber packages. What speeds and prices do you have?"
+
                                 </div>
+
                                 
+
                                 <div class="message agent-msg success">
+
                                     "Absolutely! I have all the latest information right here. We have three fiber packages..."
+
                                 </div>
+
                                 
+
                                 <div class="quick-response">
+
                                     <div class="response-time">⚡ Response Time: <span>15 seconds</span></div>
+
                                     <div class="accuracy-badge">🎯 100% Accurate Information</div>
+
                                 </div>
+
                                 
+
                                 <div class="message agent-msg success">
+
                                     "Our new Fiber Ultra at 100 Mbps for Rs. 8,000 just launched this week! Perfect for heavy usage. Would you like me to check availability in your area?"
+
                                 </div>
+
                                 
+
                                 <div class="customer-reaction">
+
                                     <div class="reaction-bubble positive">
+
                                         <p>"Wow, that was quick and detailed!"</p>
+
                                         <p>"Exactly what I needed to know."</p>
+
                                         <p>"Great service! 👍"</p>
+
                                     </div>
+
                                 </div>
+
                             </div>
+
                         </div>
+
                     </div>
+
                 </div>
 
+
+
                 <!-- WordPress Self-Service Demo -->
+
                 <div class="wordpress-demo">
+
                     <h3 style="text-align: center; color: #28a745; margin: 30px 0;">🚀 WordPress Self-Service in Action</h3>
+
                     <div class="wordpress-interface">
+
                         <div class="wp-header">
+
                             <span>📝 WordPress Admin Dashboard</span>
+
                             <span class="user-badge">👤 Training Team Member</span>
+
                         </div>
+
                         
+
                         <div class="wp-content">
+
                             <div class="update-scenario">
+
                                 <div class="scenario-step">
+
                                     <div class="step-number">1</div>
+
                                     <div class="step-content">
+
                                         <h4>🎯 New Product Alert Received</h4>
+
                                         <p>"Marketing just launched Fiber Ultra 100 Mbps package"</p>
+
                                     </div>
+
                                 </div>
+
                                 
+
                                 <div class="scenario-step">
+
                                     <div class="step-number">2</div>
+
                                     <div class="step-content">
+
                                         <h4>⚡ Instant WordPress Update</h4>
+
                                         <div class="wp-editor">
+
                                             <div class="editor-toolbar">
+
                                                 <button class="wp-btn">Bold</button>
+
                                                 <button class="wp-btn">Italic</button>
+
                                                 <button class="wp-btn">Link</button>
+
                                                 <button class="wp-btn active">Publish</button>
+
                                             </div>
+
                                             <div class="editor-content">
+
                                                 <p><strong>NEW: Fiber Ultra Package</strong></p>
+
                                                 <p>Speed: 100 Mbps | Price: Rs. 8,000/month</p>
+
                                                 <p>Perfect for businesses and heavy users!</p>
+
                                             </div>
+
                                         </div>
+
                                     </div>
+
                                 </div>
+
                                 
+
                                 <div class="scenario-step">
+
                                     <div class="step-number">3</div>
+
                                     <div class="step-content">
+
                                         <h4>✅ Live in 30 Seconds</h4>
+
                                         <div class="publish-success">
+
                                             <span class="success-icon">🎉</span>
+
                                             <span>Knowledge base updated successfully!</span>
+
                                             <span class="time-stamp">Updated: Just now</span>
+
                                         </div>
+
                                     </div>
+
                                 </div>
+
                             </div>
+
                         </div>
+
                     </div>
+
                 </div>
+
+
+
+
 
 
 
                 <!-- Success Metrics -->
+
                 <div class="success-metrics">
+
                     <h3 style="text-align: center; margin-bottom: 20px;">📊 Live Success Metrics</h3>
+
                     <div class="metrics-grid">
+
                         <div class="metric-card success-card">
+
                             <div class="metric-value positive" id="aht-after">3:15</div>
+
                             <div class="metric-label">Average Handle Time</div>
+
                             <div class="metric-improvement">📉 -5:30 improvement</div>
+
                         </div>
+
                         <div class="metric-card success-card">
+
                             <div class="metric-value positive" id="accuracy-after">98%</div>
+
                             <div class="metric-label">Information Accuracy</div>
+
                             <div class="metric-improvement">📈 +31% improvement</div>
+
                         </div>
+
                         <div class="metric-card success-card">
+
                             <div class="metric-value positive" id="satisfaction-after">4.8/5</div>
+
                             <div class="metric-label">Agent Satisfaction</div>
+
                             <div class="metric-improvement">😊 +2.7 points</div>
+
                         </div>
+
                         <div class="metric-card success-card">
-                            <div class="metric-value positive" id="cost-after">₨ 1.0M</div>
-                            <div class="metric-label">Monthly Operational Cost</div>
-                            <div class="metric-improvement">💰 -1.5M saved</div>
+
+                            <div class="metric-value positive" id="cost-after" style="font-size: 1.85rem; white-space: nowrap;">Zero Rs</div>
+
+                            <div class="metric-label">Monthly Cost</div>
+
+                            <div class="metric-improvement">💰 6M Yearly Saved</div>
+
                         </div>
+
                     </div>
+
                 </div>
+
             </div>
+
         </section>
+
+
 
         <section id="impact-scenario" class="scenario-content">
+
             <div class="impact-section">
+
                 <h2 style="margin-bottom: 30px;">🎯 Business Impact & ROI</h2>
+
                 
+
                 <div class="savings-highlight">
+
                     6M PKR
+
                 </div>
+
                 <p style="font-size: 1.3rem; margin-bottom: 30px;">Annual Savings Achieved</p>
 
+
+
                 <div class="metrics-grid" style="margin-top: 30px;">
+
                     <div class="metric-card">
+
                         <div class="metric-value positive">100%</div>
+
                         <div class="metric-label">Developer Independence</div>
+
                     </div>
+
                     <div class="metric-card">
+
                         <div class="metric-value positive">Real-time</div>
+
                         <div class="metric-label">Information Updates</div>
+
                     </div>
+
                     <div class="metric-card">
+
                         <div class="metric-value positive">Automated</div>
+
                         <div class="metric-label">Chatbot Assistance</div>
+
                     </div>
+
                     <div class="metric-card">
+
                         <div class="metric-value positive">Team</div>
+
                         <div class="metric-label">Empowerment</div>
+
                     </div>
+
                 </div>
+
+
 
                 <div style="background: rgba(255,255,255,0.1); border-radius: 10px; padding: 20px; margin-top: 30px;">
+
                     <h3>🏆 Key Achievements</h3>
+
                     <ul style="text-align: left; max-width: 600px; margin: 0 auto;">
+
                         <li>✅ Migrated from HTML/CSS to WordPress</li>
+
                         <li>✅ Eliminated developer dependency</li>
+
                         <li>✅ Trained team for self-service updates</li>
+
                         <li>✅ Implemented automated chatbot</li>
+
                         <li>✅ Reduced AHT and improved accuracy</li>
+
                         <li>✅ Enhanced agent and customer satisfaction</li>
+
                     </ul>
+
                 </div>
+
             </div>
+
         </section>
+
     </main>
 
+
+
     <!-- Bot Toggle Button -->
+
     <div id="bot-toggle" class="bot-toggle" onclick="openChatbot()">
+
         <div class="bot-icon">🤖</div>
+
         <div class="bot-tooltip">
+
             <div class="tooltip-text">Want to search latest packages?</div>
+
             <div class="tooltip-arrow"></div>
+
         </div>
+
     </div>
+
+
 
     <!-- Floating Chatbot -->
+
     <div id="floating-chatbot" class="floating-chatbot">
+
         <div class="chatbot-floating-header">
+
             <div class="chatbot-title">
+
                 <span>🤖</span>
+
                 <span>AI Knowledge Assistant</span>
+
             </div>
+
             <button class="chatbot-close" onclick="closeChatbot()">×</button>
+
         </div>
+
         <div class="chatbot-body">
+
             <div class="chatbot-messages" id="chatbot-messages">
+
                 <div class="chat-message">
+
                     <div class="bot-msg">
+
                         <strong>👋 Welcome!</strong><br>
+
                         I can help you find packages and articles instantly. Try searching:
+
                         <div class="search-suggestions">
+
                             <span class="suggestion-tag" onclick="searchChatbot('10mb')">10mb</span>
+
                             <span class="suggestion-tag" onclick="searchChatbot('new pkg')">new pkg</span>
+
                             <span class="suggestion-tag" onclick="searchChatbot('fiber')">fiber</span>
+
                             <span class="suggestion-tag" onclick="searchChatbot('pricing')">pricing</span>
+
                         </div>
+
                     </div>
+
                 </div>
+
             </div>
+
             <div class="chatbot-input-area">
+
                 <input type="text" class="chatbot-search-input" id="chatbot-input" 
+
                        placeholder="Search packages, articles... (e.g., '10mb', 'new pkg')" 
+
                        onkeyup="handleChatbotSearch(event)">
+
             </div>
+
         </div>
+
     </div>
 
+
+
     <script>
+
         // Chatbot Knowledge Base
+
         const packagesData = [
+
             {
+
                 id: 1,
+
                 name: "Fiber Basic",
+
                 speed: "25 Mbps",
+
                 price: "Rs. 2,000/month",
+
                 type: "basic",
+
                 keywords: ["basic", "25mb", "25", "2000", "cheap", "starter"],
+
                 description: "Perfect for light browsing and email",
+
                 features: ["Unlimited data", "24/7 support", "Free installation"]
+
             },
+
             {
+
                 id: 2,
+
                 name: "Fiber Premium",
+
                 speed: "100 Mbps",
+
                 price: "Rs. 4,500/month",
+
                 type: "popular",
+
                 keywords: ["premium", "100mb", "100", "4500", "fast", "popular"],
+
                 description: "Great for streaming and gaming",
+
                 features: ["Unlimited data", "Priority support", "Free router", "Static IP"]
+
             },
+
             {
+
                 id: 3,
+
                 name: "Fiber Ultra",
+
                 speed: "100 Mbps",
+
                 price: "Rs. 8,000/month",
+
                 type: "new",
+
                 keywords: ["ultra", "100mb", "100", "8000", "new", "latest", "new pkg", "new package"],
+
                 description: "Ultimate speed for businesses and power users",
+
                 features: ["Unlimited data", "Dedicated support", "Premium router", "Multiple static IPs", "SLA guarantee"]
+
             },
+
             {
+
                 id: 4,
+
                 name: "Business Starter",
+
                 speed: "50 Mbps",
+
                 price: "Rs. 6,000/month",
+
                 type: "business",
+
                 keywords: ["business", "50mb", "50", "6000", "office", "commercial"],
+
                 description: "Designed for small businesses",
+
                 features: ["Business-grade support", "Static IP", "Priority bandwidth"]
+
             },
+
             {
+
                 id: 5,
+
                 name: "Student Package",
+
                 speed: "10 Mbps",
+
                 price: "Rs. 1,200/month",
+
                 type: "student",
+
                 keywords: ["student", "10mb", "10", "1200", "budget", "education"],
+
                 description: "Special discount for students",
+
                 features: ["Student verification required", "6-month contract", "Study hours priority"]
+
             }
+
         ];
+
+
 
         const articlesData = [
+
             {
+
                 id: 1,
+
                 title: "New Fiber Ultra Package Launch",
+
                 snippet: "Introducing our fastest package with 100 Mbps speeds and premium features for Rs. 8,000/month",
+
                 keywords: ["new", "launch", "ultra", "fiber", "new pkg", "new package", "latest"],
+
                 category: "announcements",
+
                 fullContent: {
+
                     lastUpdated: "2 hours ago",
+
                     staffInfo: "📋 Staff Guidelines: This package targets premium customers and businesses. Highlight the SLA guarantee and dedicated support. Commission: 8% on successful sales.",
+
                     customerInfo: "🌟 Customer Benefits: Get blazing-fast 100 Mbps speeds with 99.9% uptime guarantee. Perfect for 4K streaming, gaming, and video conferencing. Free premium router included!",
+
                     keyPoints: [
+
                         "✅ 100 Mbps download/upload speeds",
+
                         "✅ 99.9% uptime SLA guarantee", 
+
                         "✅ 24/7 dedicated technical support",
+
                         "✅ Free premium Wi-Fi 6 router (worth Rs. 15,000)",
+
                         "✅ Multiple static IP addresses",
+
                         "✅ Priority bandwidth during peak hours"
+
                     ],
+
                     pricing: "Rs. 8,000/month (12-month contract) | Rs. 9,500/month (6-month contract)",
+
                     availability: "Available in Karachi, Lahore, Islamabad. Expanding to Faisalabad next month."
+
                 }
+
             },
+
             {
+
                 id: 2,
+
                 title: "Internet Speed Guide: Choosing the Right Package",
+
                 snippet: "Learn how to select the perfect internet speed for your needs. From 10 Mbps for basic use to 100 Mbps for power users",
+
                 keywords: ["speed", "guide", "choose", "10mb", "100mb", "comparison"],
+
                 category: "guides",
+
                 fullContent: {
+
                     lastUpdated: "1 day ago",
+
                     staffInfo: "📋 Staff Guidelines: Use this guide to help customers choose appropriate packages. Don't oversell - match customer needs to avoid complaints and cancellations.",
+
                     customerInfo: "🎯 Find Your Perfect Speed: Choose based on your household size and internet usage patterns.",
+
                     keyPoints: [
+
                         "🏠 1-2 users, basic browsing: 10-25 Mbps (Student/Basic packages)",
+
                         "👨‍👩‍👧‍👦 3-4 users, streaming HD: 50-100 Mbps (Premium package)",
+
                         "🏢 Small business, video calls: 50-100 Mbps (Business Starter)",
+
                         "🎮 Gaming, 4K streaming: 100+ Mbps (Fiber Ultra)",
+
                         "🏭 Large office, cloud services: Custom enterprise solutions"
+
                     ],
+
                     pricing: "Speed recommendations are based on simultaneous usage patterns",
+
                     availability: "All speed tiers available across our coverage areas"
+
                 }
+
             },
+
             {
+
                 id: 3,
+
                 title: "Pricing Updates for 2024",
+
                 snippet: "Updated pricing structure for all packages. New competitive rates starting from Rs. 1,200 for students",
+
                 keywords: ["pricing", "2024", "rates", "cost", "price", "student"],
+
                 category: "pricing",
+
                 fullContent: {
+
                     lastUpdated: "3 days ago",
+
                     staffInfo: "📋 Staff Guidelines: New pricing effective Jan 1, 2024. Student packages require valid student ID verification. Existing customers get 3-month grace period.",
+
                     customerInfo: "💰 New Competitive Pricing: We've reduced prices across all packages while improving service quality!",
+
                     keyPoints: [
+
                         "🎓 Student Package: Rs. 1,200/month (was Rs. 1,500) - 50% discount with valid student ID",
+
                         "🏠 Fiber Basic: Rs. 2,000/month (was Rs. 2,200) - 25 Mbps",
+
                         "⭐ Fiber Premium: Rs. 4,500/month (was Rs. 5,000) - 100 Mbps", 
+
                         "🚀 Fiber Ultra: Rs. 8,000/month (NEW) - 100 Mbps with premium features",
+
                         "🏢 Business packages: Custom pricing based on requirements"
+
                     ],
+
                     pricing: "All prices include taxes. Installation fee waived for 12-month contracts.",
+
                     availability: "Price changes apply to new customers immediately, existing customers from next billing cycle"
+
                 }
+
             },
+
             {
+
                 id: 4,
+
                 title: "Fiber vs DSL: Why Upgrade?",
+
                 snippet: "Discover the benefits of fiber internet over traditional DSL connections. Better speed, reliability, and future-proof technology",
+
                 keywords: ["fiber", "dsl", "upgrade", "benefits", "comparison"],
+
                 category: "technical",
+
                 fullContent: {
+
                     lastUpdated: "5 days ago",
+
                     staffInfo: "📋 Staff Guidelines: Use this comparison to convince DSL customers to upgrade. Emphasize reliability and future-proofing. Offer migration discounts for DSL customers.",
+
                     customerInfo: "🔄 Ready to Upgrade? See why fiber is the smart choice for modern internet needs.",
+
                     keyPoints: [
+
                         "⚡ Speed: Fiber up to 100 Mbps vs DSL max 25 Mbps",
+
                         "📶 Reliability: Fiber 99.9% uptime vs DSL 95% uptime",
+
                         "🌧️ Weather Resistance: Fiber unaffected by rain/storms",
+
                         "📈 Upload Speeds: Fiber symmetric speeds vs DSL limited upload",
+
                         "🔮 Future-Ready: Fiber supports emerging technologies",
+
                         "💻 Multiple Devices: Better performance with many connected devices"
+
                     ],
+
                     pricing: "DSL to Fiber migration: 50% off first 3 months + free installation",
+
                     availability: "Fiber available in 80% of our service areas. Check coverage at your location."
+
                 }
+
             },
+
             {
+
                 id: 5,
+
                 title: "Business Internet Solutions",
+
                 snippet: "Comprehensive guide to business internet packages. From small offices to large enterprises, find the right solution",
+
                 keywords: ["business", "office", "enterprise", "commercial", "solutions"],
+
                 category: "business",
+
                 fullContent: {
+
                     lastUpdated: "1 week ago",
+
                     staffInfo: "📋 Staff Guidelines: Business customers have higher value and longer contracts. Focus on reliability, support, and scalability. Involve technical team for enterprise deals.",
+
                     customerInfo: "🏢 Business Solutions: Reliable internet that grows with your business needs.",
+
                     keyPoints: [
+
                         "🏪 Small Business (5-10 employees): Business Starter 50 Mbps - Rs. 6,000/month",
+
                         "🏢 Medium Business (10-50 employees): Business Pro 100 Mbps - Rs. 12,000/month",
+
                         "🏭 Large Enterprise (50+ employees): Custom solutions up to 1 Gbps",
+
                         "☁️ Cloud Integration: Optimized for Office 365, Google Workspace",
+
                         "🔒 Security: Business-grade firewall and VPN support",
+
                         "📞 Support: Dedicated business support team, 4-hour response SLA"
+
                     ],
+
                     pricing: "Business packages include static IP, priority support, and SLA guarantees",
+
                     availability: "Business solutions available in all major cities. Site surveys available for enterprise customers."
+
                 }
+
             },
+
             {
+
                 id: 6,
+
                 title: "Installation Process and Timeline",
+
                 snippet: "Step-by-step guide to fiber installation. What to expect, timeline, and preparation tips for new customers",
+
                 keywords: ["installation", "setup", "timeline", "process", "new customer"],
+
                 category: "support",
+
                 fullContent: {
+
                     lastUpdated: "4 days ago",
+
                     staffInfo: "📋 Staff Guidelines: Set proper expectations for installation timeline. Residential: 3-5 days, Business: 5-10 days. Always confirm customer availability before scheduling.",
+
                     customerInfo: "🔧 Installation Made Easy: Here's what to expect when getting your new fiber connection.",
+
                     keyPoints: [
+
                         "📅 Day 1: Order processing and technical survey (if needed)",
+
                         "📅 Day 2-3: Fiber cable routing and external installation",
+
                         "📅 Day 4-5: Indoor installation and equipment setup",
+
                         "🏠 Residential: 3-5 working days average",
+
                         "🏢 Business: 5-10 working days (includes network setup)",
+
                         "🛠️ What's Included: Fiber cable, ONT device, Wi-Fi router, basic configuration"
+
                     ],
+
                     pricing: "Installation free with 12-month contract. Rs. 5,000 installation fee for shorter contracts.",
+
                     availability: "Installation teams available Mon-Sat, 9 AM - 6 PM. Emergency business installations available on weekends."
+
                 }
+
             },
+
             {
+
                 id: 7,
+
                 title: "Troubleshooting Common Issues",
+
                 snippet: "Quick solutions for internet connectivity problems. Self-service tips before calling support",
+
                 keywords: ["troubleshoot", "problems", "issues", "slow", "down", "connection"],
+
                 category: "support",
+
                 fullContent: {
+
                     lastUpdated: "2 days ago",
+
                     staffInfo: "📋 Staff Guidelines: Guide customers through these steps before escalating to technical team. 80% of issues resolve with basic troubleshooting.",
+
                     customerInfo: "🔧 Quick Fixes: Try these simple steps to resolve common internet issues.",
+
                     keyPoints: [
+
                         "🔌 Step 1: Check all cable connections (power, ethernet, fiber)",
+
                         "🔄 Step 2: Restart your router (unplug for 30 seconds, plug back in)",
+
                         "📶 Step 3: Check Wi-Fi signal strength and move closer to router",
+
                         "💻 Step 4: Test with ethernet cable directly to router",
+
                         "📱 Step 5: Check if issue affects all devices or just one",
+
                         "⏰ Step 6: If problem persists after 10 minutes, contact support"
+
                     ],
+
                     pricing: "Basic troubleshooting support included in all packages",
+
                     availability: "24/7 technical support: Call 111-FIBER (34237) or chat online"
+
                 }
+
             },
+
             {
+
                 id: 8,
+
                 title: "Data Usage and Fair Usage Policy",
+
                 snippet: "Understanding your data limits and our fair usage policy for optimal service quality",
+
                 keywords: ["data", "usage", "limit", "fair", "policy", "unlimited"],
+
                 category: "policy",
+
                 fullContent: {
+
                     lastUpdated: "1 week ago",
+
                     staffInfo: "📋 Staff Guidelines: All packages are truly unlimited. Fair usage policy only applies to extreme abuse (>5TB/month). Educate customers about reasonable usage.",
+
                     customerInfo: "📊 Unlimited Data: Enjoy truly unlimited internet with our fair usage guidelines.",
+
                     keyPoints: [
+
                         "♾️ All packages include unlimited data - no monthly caps",
+
                         "📈 Fair Usage: Policy applies only to extreme usage (>5TB/month)",
+
                         "🎮 Gaming & Streaming: No restrictions on normal entertainment usage",
+
                         "💼 Business Use: Commercial activities fully supported",
+
                         "⚡ Speed Management: Speeds maintained during normal usage",
+
                         "🚨 Abuse Prevention: Only illegal activities or network abuse restricted"
+
                     ],
+
                     pricing: "No additional charges for data usage on any package",
+
                     availability: "Fair usage policy details available in service agreement"
+
                 }
+
             }
+
         ];
 
+
+
         function showScenario(scenario) {
+
             // Hide all scenarios
+
             document.querySelectorAll('.scenario-content').forEach(content => {
+
                 content.classList.remove('active');
+
             });
+
             
+
             // Remove active class from all buttons
+
             document.querySelectorAll('.toggle-btn').forEach(btn => {
+
                 btn.classList.remove('active');
+
             });
+
             
+
             // Show selected scenario
+
             document.getElementById(scenario + '-scenario').classList.add('active');
+
             
+
             // Add active class to clicked button
+
             event.target.classList.add('active');
 
+
+
             // Show/hide bot toggle and chatbot based on scenario
+
             const botToggle = document.getElementById('bot-toggle');
+
             const chatbot = document.getElementById('floating-chatbot');
+
             
+
             if (scenario === 'after') {
+
                 botToggle.style.display = 'flex';
+
                 // Don't auto-open chatbot, let user click the toggle
+
             } else {
+
                 botToggle.style.display = 'none';
+
                 chatbot.classList.remove('active');
+
             }
+
         }
+
+
 
         function openChatbot() {
+
             const chatbot = document.getElementById('floating-chatbot');
+
             const botToggle = document.getElementById('bot-toggle');
+
             
+
             chatbot.classList.add('active');
+
             botToggle.style.display = 'none';
+
         }
+
+
 
         function closeChatbot() {
+
             const chatbot = document.getElementById('floating-chatbot');
+
             const botToggle = document.getElementById('bot-toggle');
+
             
+
             chatbot.classList.remove('active');
+
             botToggle.style.display = 'flex';
+
         }
+
+
 
         function searchChatbot(query) {
+
             const input = document.getElementById('chatbot-input');
+
             input.value = query;
+
             performChatbotSearch(query);
+
         }
+
+
 
         function handleChatbotSearch(event) {
+
             const query = event.target.value.trim().toLowerCase();
+
             if (event.key === 'Enter' && query) {
+
                 performChatbotSearch(query);
+
             }
+
         }
+
+
 
         function performChatbotSearch(query) {
+
             const messagesContainer = document.getElementById('chatbot-messages');
+
             
+
             // Add user message
+
             addChatMessage(query, 'user');
+
             
+
             // Show typing indicator
+
             showTypingIndicator();
+
             
+
             // Simulate search delay
+
             setTimeout(() => {
+
                 hideTypingIndicator();
+
                 
+
                 // Search packages and articles
+
                 const packageResults = searchPackages(query);
+
                 const articleResults = searchArticles(query);
+
                 
+
                 if (packageResults.length > 0 || articleResults.length > 0) {
+
                     let responseHTML = '<strong>🔍 Search Results:</strong><br><br>';
+
                     
+
                     if (packageResults.length > 0) {
+
                         responseHTML += '<strong>📦 Packages:</strong><br>';
+
                         packageResults.forEach(pkg => {
+
                             const badgeClass = pkg.type === 'new' ? 'badge-new' : 
+
                                              pkg.type === 'popular' ? 'badge-popular' : 'badge-basic';
+
                             const resultClass = pkg.type === 'new' ? 'new' : 
+
                                               pkg.type === 'popular' ? 'featured' : '';
+
                             
+
                             responseHTML += `
+
                                 <div class="package-result ${resultClass}">
+
                                     <div class="package-header">
+
                                         <span class="package-name">${pkg.name}</span>
+
                                         <span class="package-badge ${badgeClass}">${pkg.type.toUpperCase()}</span>
+
                                     </div>
+
                                     <div class="package-details">${pkg.speed} • ${pkg.description}</div>
+
                                     <div class="package-price">${pkg.price}</div>
+
                                 </div>
+
                             `;
+
                         });
+
                     }
+
                     
+
                     if (articleResults.length > 0) {
+
                         responseHTML += '<br><strong>📄 Articles:</strong><br>';
+
                         articleResults.forEach(article => {
+
                             responseHTML += `
+
                                 <div class="article-result" onclick="toggleArticle(${article.id})">
+
                                     <div class="article-header">
+
                                         <div class="article-title">${article.title}</div>
+
                                         <div class="article-expand-icon">▼</div>
+
                                     </div>
+
                                     <div class="article-snippet">${article.snippet}</div>
+
                                     <div class="article-full-content">
+
                                         <div class="article-meta">
+
                                             <span class="last-updated">Updated: ${article.fullContent.lastUpdated}</span>
+
                                             <span class="article-category">${article.category}</span>
+
                                         </div>
+
                                         
+
                                         <div class="content-section">
+
                                             <h4>👥 For Staff:</h4>
+
                                             <div class="staff-info">${article.fullContent.staffInfo}</div>
+
                                         </div>
+
                                         
+
                                         <div class="content-section">
+
                                             <h4>👤 For Customers:</h4>
+
                                             <div class="customer-info">${article.fullContent.customerInfo}</div>
+
                                         </div>
+
                                         
+
                                         <div class="content-section">
+
                                             <h4>📋 Key Information:</h4>
+
                                             <ul class="key-points">
+
                                                 ${article.fullContent.keyPoints.map(point => `<li>${point}</li>`).join('')}
+
                                             </ul>
+
                                         </div>
+
                                         
+
                                         <div class="content-section">
+
                                             <h4>💰 Pricing:</h4>
+
                                             <div class="pricing-info">${article.fullContent.pricing}</div>
+
                                         </div>
+
                                         
+
                                         <div class="content-section">
+
                                             <h4>📍 Availability:</h4>
+
                                             <div class="availability-info">${article.fullContent.availability}</div>
+
                                         </div>
+
                                     </div>
+
                                 </div>
+
                             `;
+
                         });
+
                     }
+
                     
+
                     addChatMessage(responseHTML, 'bot');
+
                 } else {
+
                     addChatMessage(`
+
                         <div class="no-results">
+
                             <strong>🤔 No results found for "${query}"</strong><br><br>
+
                             Try these popular searches:
+
                             <div class="search-suggestions">
+
                                 <span class="suggestion-tag" onclick="searchChatbot('fiber')">fiber</span>
+
                                 <span class="suggestion-tag" onclick="searchChatbot('100mb')">100mb</span>
+
                                 <span class="suggestion-tag" onclick="searchChatbot('new pkg')">new pkg</span>
+
                                 <span class="suggestion-tag" onclick="searchChatbot('pricing')">pricing</span>
+
                             </div>
+
                         </div>
+
                     `, 'bot');
+
                 }
+
                 
+
                 // Clear input
+
                 document.getElementById('chatbot-input').value = '';
+
             }, 1000);
+
         }
+
+
 
         function searchPackages(query) {
+
             return packagesData.filter(pkg => 
+
                 pkg.keywords.some(keyword => keyword.includes(query)) ||
+
                 pkg.name.toLowerCase().includes(query) ||
+
                 pkg.description.toLowerCase().includes(query)
+
             ).slice(0, 3); // Limit to 3 results
+
         }
+
+
 
         function searchArticles(query) {
+
             return articlesData.filter(article => 
+
                 article.keywords.some(keyword => keyword.includes(query)) ||
+
                 article.title.toLowerCase().includes(query) ||
+
                 article.snippet.toLowerCase().includes(query)
+
             ).slice(0, 3); // Limit to 3 results
+
         }
+
+
 
         function addChatMessage(content, type) {
+
             const messagesContainer = document.getElementById('chatbot-messages');
+
             const messageDiv = document.createElement('div');
+
             messageDiv.className = 'chat-message';
+
             
+
             if (type === 'user') {
+
                 messageDiv.innerHTML = `<div class="user-msg">${content}</div>`;
+
             } else {
+
                 messageDiv.innerHTML = `<div class="bot-msg">${content}</div>`;
+
             }
+
             
+
             messagesContainer.appendChild(messageDiv);
+
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
         }
+
+
 
         function showTypingIndicator() {
+
             const messagesContainer = document.getElementById('chatbot-messages');
+
             const typingDiv = document.createElement('div');
+
             typingDiv.className = 'chat-message';
+
             typingDiv.id = 'typing-indicator';
+
             typingDiv.innerHTML = `
+
                 <div class="bot-msg">
+
                     <div class="typing-indicator">
+
                         <span>AI is searching</span>
+
                         <div class="typing-dots">
+
                             <div class="typing-dot"></div>
+
                             <div class="typing-dot"></div>
+
                             <div class="typing-dot"></div>
+
                         </div>
+
                     </div>
+
                 </div>
+
             `;
+
             messagesContainer.appendChild(typingDiv);
+
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
         }
+
+
 
         function hideTypingIndicator() {
+
             const typingIndicator = document.getElementById('typing-indicator');
+
             if (typingIndicator) {
+
                 typingIndicator.remove();
+
             }
+
         }
+
+
 
         function toggleArticle(articleId) {
+
             // Find the article element by looking for the onclick attribute
+
             const articleElements = document.querySelectorAll('.article-result');
+
             let targetArticle = null;
+
             
+
             articleElements.forEach(element => {
+
                 const onclickAttr = element.getAttribute('onclick');
+
                 if (onclickAttr && onclickAttr.includes(`toggleArticle(${articleId})`)) {
+
                     targetArticle = element;
+
                 }
+
             });
+
             
+
             if (targetArticle) {
+
                 // Close other expanded articles first
+
                 articleElements.forEach(element => {
+
                     if (element !== targetArticle) {
+
                         element.classList.remove('expanded');
+
                     }
+
                 });
+
                 
+
                 // Toggle the clicked article
+
                 targetArticle.classList.toggle('expanded');
+
                 
+
                 // Scroll the expanded article into view
+
                 if (targetArticle.classList.contains('expanded')) {
+
                     setTimeout(() => {
+
                         targetArticle.scrollIntoView({ 
+
                             behavior: 'smooth', 
+
                             block: 'nearest' 
+
                         });
+
                     }, 100);
+
                 }
+
             }
+
         }
+
+
 
         function handleChatInput(event) {
+
             const input = event.target;
+
             const response = document.getElementById('chat-response');
+
             
+
             if (input.value.toLowerCase().includes('pkg')) {
+
                 response.style.display = 'block';
+
             } else {
+
                 response.style.display = 'none';
+
             }
+
         }
+
+
 
         function handleEnhancedChat(event) {
+
             const input = event.target;
+
             const response = document.getElementById('enhanced-chat-response');
+
             
+
             if (input.value.toLowerCase().includes('pkg') || input.value.toLowerCase().includes('price')) {
+
                 response.style.display = 'block';
+
             } else {
+
                 response.style.display = 'none';
+
             }
+
         }
+
+
 
         // Animate timers
+
         let callTimer = 0;
+
         let holdTimer = 45;
+
         let successTimer = 0;
 
+
+
         function updateTimers() {
+
             // Before scenario timers
+
             const callTimerEl = document.getElementById('call-timer');
+
             const holdTimerEl = document.getElementById('hold-timer');
+
             
+
             if (callTimerEl) {
+
                 callTimer++;
+
                 const minutes = Math.floor(callTimer / 60);
+
                 const seconds = callTimer % 60;
+
                 callTimerEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            }
-            
-            if (holdTimerEl) {
-                holdTimer++;
-                const minutes = Math.floor(holdTimer / 60);
-                const seconds = holdTimer % 60;
-                holdTimerEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
             }
 
+            
+
+            if (holdTimerEl) {
+
+                holdTimer++;
+
+                const minutes = Math.floor(holdTimer / 60);
+
+                const seconds = holdTimer % 60;
+
+                holdTimerEl.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+            }
+
+
+
             // After scenario timer
+
             const successTimerEl = document.getElementById('success-call-timer');
+
             if (successTimerEl) {
+
                 successTimer++;
+
                 const minutes = Math.floor(successTimer / 60);
+
                 const seconds = successTimer % 60;
+
                 successTimerEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+            }
+
+        }
+
+
+
+        // Start timers
+
+        setInterval(updateTimers, 1000);
+
+
+
+        // Add some interactive animations
+
+        document.addEventListener('DOMContentLoaded', function() {
+
+            // Animate metrics on load
+
+            const animateMetrics = () => {
+
+                const metrics = document.querySelectorAll('.metric-value');
+
+                metrics.forEach((metric, index) => {
+
+                    setTimeout(() => {
+
+                        metric.style.transform = 'scale(1.1)';
+
+                        setTimeout(() => {
+
+                            metric.style.transform = 'scale(1)';
+
+                        }, 200);
+
+                    }, index * 100);
+
+                });
+
+            };
+
+
+
+            // Trigger animation when switching scenarios
+
+            const originalShowScenario = window.showScenario;
+
+            window.showScenario = function(scenario) {
+
+                originalShowScenario.call(this, scenario);
+
+                setTimeout(animateMetrics, 500);
+
+            };
+
+
+
+            // Initial animation
+
+            setTimeout(animateMetrics, 1000);
+
+        });
+
+        function exitToPortfolio() {
+            if (window.parent && window.parent !== window) {
+                window.parent.postMessage({ type: 'CLOSE_SIMULATOR' }, '*');
+            } else {
+                window.location.href = '/#work';
             }
         }
 
-        // Start timers
-        setInterval(updateTimers, 1000);
-
-        // Add some interactive animations
-        document.addEventListener('DOMContentLoaded', function() {
-            // Animate metrics on load
-            const animateMetrics = () => {
-                const metrics = document.querySelectorAll('.metric-value');
-                metrics.forEach((metric, index) => {
-                    setTimeout(() => {
-                        metric.style.transform = 'scale(1.1)';
-                        setTimeout(() => {
-                            metric.style.transform = 'scale(1)';
-                        }, 200);
-                    }, index * 100);
-                });
-            };
-
-            // Trigger animation when switching scenarios
-            const originalShowScenario = window.showScenario;
-            window.showScenario = function(scenario) {
-                originalShowScenario.call(this, scenario);
-                setTimeout(animateMetrics, 500);
-            };
-
-            // Initial animation
-            setTimeout(animateMetrics, 1000);
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                exitToPortfolio();
+            }
         });
     </script>
+
 <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9907125814ba21e8',t:'MTc2MDc4MDQwMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+
 </html>
+
